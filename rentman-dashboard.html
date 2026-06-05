@@ -149,11 +149,13 @@ body {
   text-transform: uppercase; letter-spacing: .1em;
   margin: 1.25rem 0 8px;
   display: flex; align-items: center; gap: 10px;
+  position: relative; z-index: 10;
+  background: var(--bg); padding: 4px 0;
 }
 .section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
 /* ── PROJECT CARDS ── */
-.proj-list { display: flex; flex-direction: column; gap: 6px; }
+.proj-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: 4px; }
 .proj-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -191,12 +193,13 @@ body {
   text-transform: uppercase; letter-spacing: .05em;
 }
 .packing-badge i { font-size: 12px; }
-.proj-card { position: relative; overflow: hidden; }
+.proj-card { position: relative; }
 .proj-progress-bg {
   position: absolute; top: 0; left: 0; bottom: 0;
   background: var(--green); opacity: 0.08;
   transition: width .6s ease; pointer-events: none;
   border-radius: var(--radius);
+  overflow: hidden;
 }
 .proj-progress-label {
   font-size: 11px; font-weight: 700; color: var(--muted);
@@ -248,6 +251,35 @@ body {
 .btn-dispatch:active { transform: scale(0.97); }
 .btn-dispatch:disabled { opacity: .4; cursor: not-allowed; transform: none; }
 .btn-dispatch.dispatching { opacity: .6; cursor: wait; }
+.proj-card.overdue-alarm {
+  border-left: 4px solid var(--red) !important;
+  animation: overdue-pulse 2s ease-in-out infinite;
+}
+@keyframes overdue-pulse {
+  0%, 100% { background: var(--surface); }
+  50%       { background: rgba(240,112,112,0.08); }
+}
+.overdue-days-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 800;
+  padding: 4px 14px; border-radius: 999px;
+  background: var(--red-bg); color: var(--red);
+  border: 1.5px solid var(--red);
+  text-transform: uppercase; letter-spacing: .05em;
+  white-space: nowrap; flex-shrink: 0;
+}
+.btn-return {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; padding: 6px 16px;
+  border-radius: 999px; white-space: nowrap; cursor: pointer;
+  text-transform: uppercase; letter-spacing: .05em;
+  border: 2px solid var(--orange); background: var(--orange-bg); color: var(--orange);
+  transition: background .15s, transform .1s;
+}
+.btn-return:hover { background: var(--orange); color: var(--bg); transform: scale(1.03); }
+.btn-return:active { transform: scale(0.97); }
+.btn-return:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-return.returning { opacity: .6; cursor: wait; }
 
 /* ── EMPTY / LOADING ── */
 .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
@@ -305,23 +337,17 @@ body {
 
   <!-- STAT CARDS -->
   <div class="stats">
-    <div class="stat" id="stat-overdue" onclick="setView('overdue')">
-      <div class="stat-icon c-red"><i class="ti ti-alarm"></i></div>
-      <div class="stat-label">Overdue</div>
-      <div class="stat-val c-red" id="s-overdue">–</div>
-      <div class="stat-sub">not back yet</div>
-    </div>
     <div class="stat" id="stat-in" onclick="setView('in')">
       <div class="stat-icon c-orange"><i class="ti ti-package-import"></i></div>
-      <div class="stat-label">On its way IN</div>
+      <div class="stat-label">IN</div>
       <div class="stat-val c-orange" id="s-in">–</div>
-      <div class="stat-sub">due back soon</div>
+      <div class="stat-sub" id="s-in-sub">currently out</div>
     </div>
     <div class="stat" id="stat-out" onclick="setView('out')">
       <div class="stat-icon c-blue"><i class="ti ti-package-export"></i></div>
-      <div class="stat-label">On its way OUT</div>
+      <div class="stat-label">OUT</div>
       <div class="stat-val c-blue" id="s-out">–</div>
-      <div class="stat-sub">departing soon</div>
+      <div class="stat-sub">going out soon</div>
     </div>
     <div class="stat" id="stat-shortages" onclick="setView('shortages')">
       <div class="stat-icon c-yellow"><i class="ti ti-alert-triangle"></i></div>
@@ -337,12 +363,7 @@ body {
       <i class="ti ti-search"></i>
       <input type="text" id="search-input" placeholder="Search project name or number…" oninput="render()" />
     </div>
-    <!-- Overdue window -->
-    <select class="win-select" id="win-overdue" onchange="overdueWin=this.value; render()">
-      <option value="7" selected>Last 7 days</option>
-      <option value="30">Last 30 days</option>
-      <option value="all">All time</option>
-    </select>
+
     <!-- In window -->
     <select class="win-select" id="win-in" onchange="inWin=this.value; updateStats(); render()">
       <option value="1">Due back today</option>
@@ -379,12 +400,10 @@ body {
 // config.js is loaded above so window.RENTMAN_API_TOKEN is now set
 (function() {
   if (window.RENTMAN_API_TOKEN) {
-    var t = window.RENTMAN_API_TOKEN;
+    // Strip any surrounding quotes that json.dumps may have added
+    var t = String(window.RENTMAN_API_TOKEN).replace(/^["']|["']$/g, '').trim();
     try { var d=new Date(); d.setTime(d.getTime()+365*864e5); document.cookie='rm_tok='+encodeURIComponent(t)+';expires='+d.toUTCString()+';path=/;SameSite=Lax'; } catch(e){}
     try { localStorage.setItem('rm_tok', t); } catch(e){}
-    console.log('config.js: token loaded, length='+t.length);
-  } else {
-    console.log('config.js: no token found (RENTMAN_API_TOKEN not set)');
   }
 })();
 // ─────────────────────────────────────────────
@@ -410,12 +429,14 @@ function saveToken(t) {
   try { localStorage.setItem('rm_tok', t); } catch(e){}
 }
 function loadToken() {
-  // Check both cookie names (rm_tok = current, rm_api_token = legacy)
   var cookies = document.cookie.split(';').map(function(s){return s.trim();});
   var c = cookies.find(function(s){return s.startsWith('rm_tok=');})
        || cookies.find(function(s){return s.startsWith('rm_api_token=');});
-  if (c) return decodeURIComponent(c.split('=')[1]);
-  try { return localStorage.getItem('rm_tok') || localStorage.getItem('rm_api_token'); } catch(e){ return null; }
+  var t = c ? decodeURIComponent(c.split('=')[1]) : null;
+  if (!t) { try { t = localStorage.getItem('rm_tok') || localStorage.getItem('rm_api_token'); } catch(e){} }
+  // Strip surrounding quotes and any trailing punctuation corruption
+  if (t) t = t.replace(/^["'\s]+|["'\s.]+$/g, '').trim();
+  return t || null;
 }
 function clearToken() {
   document.cookie='rm_tok=;expires=Thu,01 Jan 1970 00:00:00 UTC;path=/;';
@@ -550,9 +571,8 @@ function statusInfo(s) {
 }
 
 function packingUrgency(p) {
-  // Returns css color class based on how soon it departs and whether it's packed
   var s = (p.status||'').toLowerCase().replace(/[^a-z]/g,'');
-  var dSt = daysFromNow(p.start);
+  var dSt = daysFromNow(p.usage_start || p.start);
   if (s==='prepped' || s==='onlocation') return 'var(--green)';
   if (s==='cancelled') return 'var(--faint)';
   if (dSt === null) return 'var(--faint)';
@@ -568,9 +588,9 @@ function packingUrgency(p) {
 // Called both at render time (date-based) and updated by loadPackingForVisible (pct-based)
 function dispatchWarningHtml(p, pct) {
   var s     = (p.status||'').toLowerCase().replace(/[^a-z]/g,'');
-  var dSt   = daysFromNow(p.start);
+  var dSt   = daysFromNow(p.usage_start || p.start);
   var today = todayStr();
-  var start = dateOnly(p.start);
+  var start = dateOnly(p.usage_start || p.start);
 
   // Already dispatched — no warning needed
   if (s === 'onlocation') return '';
@@ -671,8 +691,9 @@ function updateStats() {
     if (c==='in'      && inWindow(p))      inn++;
     if (c==='out'     && outWindow(p))     out++;
   });
-  document.getElementById('s-overdue').textContent  = ov;
-  document.getElementById('s-in').textContent       = inn;
+  document.getElementById('s-in').textContent       = inn + ov;
+  var sub = document.getElementById('s-in-sub');
+  if (sub) sub.textContent = ov > 0 ? inn+' due back, '+ov+' overdue' : 'currently out';
   document.getElementById('s-out').textContent      = out;
   // shortages count is updated by loadShortages
 }
@@ -682,13 +703,11 @@ function updateStats() {
 // ─────────────────────────────────────────────
 function setView(v) {
   currentView = v;
-  // Highlight active stat card
-  ['overdue','in','out','shortages'].forEach(function(k) {
+  ['in','out','shortages'].forEach(function(k) {
     var el = document.getElementById('stat-'+k);
     if (el) el.classList.toggle('active', k===v);
   });
-  // Show correct window dropdown
-  ['overdue','in','out'].forEach(function(k) {
+  ['in','out'].forEach(function(k) {
     var el = document.getElementById('win-'+k);
     if (el) el.classList.toggle('visible', k===v);
   });
@@ -768,6 +787,8 @@ function fetchProjects() {
           number:   p.number || p.id,
           start:    p.planperiod_start || p.period_from || null,
           end:      p.planperiod_end   || p.period_to   || null,
+          usage_start: p.usageperiod_start || p.planperiod_start || null,
+          usage_end:   p.usageperiod_end   || p.planperiod_end   || null,
           location: p.location_name || p.location || '',
           status:   normaliseStatus(rawStatus)
         };
@@ -794,8 +815,7 @@ function dispatchBtnHtml(p) {
   // Check cache for packing %
   var cached = packingCache[p.id];
   var pct = cached ? cached.pct : (s === 'prepped' ? 100 : 0);
-  var dSt = daysFromNow(p.start);
-  // Show dispatch button if: >=90% packed AND departing within 3 days (or already started)
+  var dSt = daysFromNow(p.usage_start || p.start);
   var readyToDispatch = pct >= 90 && (dSt !== null && dSt <= 3);
   if (readyToDispatch) {
     return '<button class="btn-dispatch" id="dispatch-'+p.id+'" onclick="dispatchProject('+p.id+',\''+escHtml(p.name)+'\')">'
@@ -876,18 +896,104 @@ function showSuccess(msg) {
 }
 
 // ─────────────────────────────────────────────
+// RETURN BUTTON
+// ─────────────────────────────────────────────
+function returnBtnHtml(p) {
+  var s = p.status || '';
+  if (s === 'returned') return '';
+  return '<button class="btn-return" id="return-'+p.id+'" onclick="returnProject('+p.id+',\''+escHtml(p.name)+'\')">'
+    +'<i class="ti ti-package-import"></i> Return all gear</button>';
+}
+
+function returnProject(projId, projName) {
+  var token = loadToken();
+  if (!token) return;
+  if (!confirm('Mark ALL gear on "'+projName+'" as RETURNED? This sets the project and all equipment to Returned.')) return;
+
+  var btn = document.getElementById('return-'+projId);
+  if (btn) { btn.classList.add('returning'); btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Returning…'; }
+
+  var subprojectId = null;
+
+  // Step 1: Get the subproject
+  fetch('/api/projects/'+projId+'/subprojects?limit=5', {
+    headers: { 'Authorization': 'Bearer '+token, 'Accept': 'application/json' }
+  }).then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(data) {
+    var subs = data ? (data.data || data || []) : [];
+    if (!subs.length) throw new Error('No subproject found for project '+projId);
+    subprojectId = subs[0].id;
+
+    // Step 2: Get all equipment groups for this subproject
+    return fetch('/api/subprojects/'+subprojectId+'/projectequipmentgroup?limit=300', {
+      headers: { 'Authorization': 'Bearer '+token, 'Accept': 'application/json' }
+    }).then(function(r){ return r.ok ? r.json() : null; });
+  })
+  .then(function(data) {
+    var groups = data ? (data.data || data || []) : [];
+
+    // Step 3: PATCH each equipment group to warehouse_status = returned
+    // Rentman uses "warehouse_status" field on projectequipmentgroup
+    var patches = groups.map(function(grp) {
+      return fetch('/api/projectequipmentgroup/'+grp.id, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': 'Bearer '+token,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ warehouse_status: 'returned' })
+      }).catch(function(){ return null; }); // don't fail if one group errors
+    });
+
+    return Promise.all(patches);
+  })
+  .then(function() {
+    // Step 4: Set subproject status to returned (/statuses/6)
+    return fetch('/api/subprojects/'+subprojectId, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': 'Bearer '+token,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: '/statuses/6' })
+    });
+  })
+  .then(function(res) {
+    if (!res || !res.ok) {
+      return (res ? res.text() : Promise.resolve('No response')).then(function(t){
+        throw new Error('API returned '+(res ? res.status : '?')+': '+t.slice(0,200));
+      });
+    }
+    var proj = projects.find(function(p){ return p.id === projId; });
+    if (proj) proj.status = 'returned';
+    delete packingCache[projId];
+    updateStats();
+    render();
+    showSuccess('"'+projName+'" — all gear marked as Returned!');
+  })
+  .catch(function(e) {
+    showError('Return failed: '+e.message);
+    var btn2 = document.getElementById('return-'+projId);
+    if (btn2) { btn2.classList.remove('returning'); btn2.disabled = false; btn2.innerHTML = '<i class="ti ti-package-import"></i> Return all gear'; }
+  });
+}
+
+// ─────────────────────────────────────────────
 // RENDER PROJECT LIST
 // ─────────────────────────────────────────────
 function render() {
   if (currentView === 'shortages') { renderShortages(); return; }
 
   var search = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  var overdueCardsList = [];
+  var activeCardsList  = [];
 
   var list = projects.filter(function(p) {
     var matchView;
-    if      (currentView==='overdue') matchView = overdueWindow(p);
-    else if (currentView==='in')      matchView = inWindow(p);
-    else if (currentView==='out')     matchView = outWindow(p);
+    if      (currentView==='in')  matchView = inWindow(p) || overdueWindow(p);
+    else if (currentView==='out') matchView = outWindow(p);
     else matchView = false;
 
     if (!matchView) return false;
@@ -898,12 +1004,17 @@ function render() {
   });
 
   // Sort
-  if (currentView==='overdue') {
-    // Most recently overdue first
-    list.sort(function(a,b){ return (dateOnly(b.end)||'').localeCompare(dateOnly(a.end)||''); });
-  } else if (currentView==='in') {
-    // Due back soonest first
-    list.sort(function(a,b){ return (dateOnly(a.end)||'9999').localeCompare(dateOnly(b.end)||'9999'); });
+  if (currentView==='in') {
+    list.sort(function(a,b) {
+      var ca = classify(a), cb = classify(b);
+      // Overdue section first, active section second
+      if (ca==='overdue' && cb!=='overdue') return -1;
+      if (cb==='overdue' && ca!=='overdue') return 1;
+      // Within overdue: most days late first (earliest/oldest end date first)
+      if (ca==='overdue' && cb==='overdue') return (dateOnly(a.end)||'').localeCompare(dateOnly(b.end)||'');
+      // Within active: soonest return date first
+      return (dateOnly(a.end)||'9999').localeCompare(dateOnly(b.end)||'9999');
+    });
   } else if (currentView==='out') {
     // Sort: unpacked & urgent first, then by start date
     list.sort(function(a,b) {
@@ -918,9 +1029,8 @@ function render() {
 
   if (!list.length) {
     var msgs = {
-      overdue: 'No overdue projects in this period.',
-      in:      'Nothing coming back in this window.',
-      out:     'Nothing going out in this window.'
+      in:  'Nothing out right now.',
+      out: 'Nothing going out.'
     };
     setContent('<div class="empty-state"><i class="ti ti-circle-check"></i><p>'+(msgs[currentView]||'No projects found.')+'</p></div>');
     return;
@@ -939,9 +1049,11 @@ function render() {
   }
 
   var dotCol  = { overdue:'var(--red)', in:'var(--orange)', out:'var(--blue)' };
+  // In IN view, overdue items get red dot
+  var itemDot = function(p, c) { return c==='overdue' ? 'var(--red)' : dotCol[currentView] || dotCol[c]; };
   var badgeCls= { overdue:'badge-overdue', in:'badge-in', out:'badge-out' };
   var badgeIcon={ overdue:'ti-alarm', in:'ti-package-import', out:'ti-package-export' };
-  var badgeLbl= { overdue:'Overdue', in:'On its way IN', out:'On its way OUT' };
+  var badgeLbl= { overdue:'Overdue', in:'IN', out:'OUT' };
 
   var cards = list.map(function(p) {
     var c    = currentView;
@@ -950,12 +1062,19 @@ function render() {
 
     var note = '';
     if (c==='overdue') {
-      note = '<span class="proj-note c-red">'+Math.abs(dEnd)+(Math.abs(dEnd)===1?' day':' days')+' overdue</span>';
+      var od = Math.abs(dEnd);
+      note = '<span class="overdue-days-badge"><i class="ti ti-alarm"></i>'+od+(od===1?' DAY':' DAYS')+' OVERDUE</span>';
     } else if (c==='in') {
-      var dl = dEnd===0 ? 'Due back TODAY' : dEnd===1 ? 'Due back TOMORROW' : 'Due back in '+dEnd+' days';
-      note = '<span class="proj-note c-orange">'+dl+'</span>';
+      var dl;
+      if (dEnd < 0) dl = 'LATE '+Math.abs(dEnd)+(Math.abs(dEnd)===1?' day':' days');
+      else if (dEnd===0) dl = 'Due back TODAY';
+      else if (dEnd===1) dl = 'Due back TOMORROW';
+      else dl = 'Due back in '+dEnd+' days';
+      var noteCol = dEnd < 0 ? 'c-red' : 'c-orange';
+      note = '<span class="proj-note '+noteCol+'">'+dl+'</span>';
     } else if (c==='out') {
-      var dl = dSt===0 ? 'Leaving TODAY' : dSt===1 ? 'Leaving TOMORROW' : 'Leaving in '+dSt+' days';
+      var dUsage = daysFromNow(p.usage_start);
+      var dl = dUsage===0 ? 'Leaving TODAY' : dUsage===1 ? 'Leaving TOMORROW' : dUsage!==null && dUsage>0 ? 'Leaving in '+dUsage+' days' : dSt===0 ? 'Leaving TODAY' : dSt===1 ? 'Leaving TOMORROW' : 'Leaving in '+dSt+' days';
       note = '<span class="proj-note c-blue">'+dl+'</span>';
     }
 
@@ -990,9 +1109,10 @@ function render() {
       dataAttrs    = ' data-projid="'+p.id+'" data-status="'+escHtml(p.status)+'" data-start="'+escHtml(p.start||'')+'"';
     }
 
-    return '<div class="proj-card" style="'+urgencyBorder+'"'+dataAttrs+'>'
+    var overdueAlarmCls = (currentView==='in' && c==='overdue') ? ' overdue-alarm' : '';
+    var card = '<div class="proj-card'+overdueAlarmCls+'" style="'+urgencyBorder+'"'+dataAttrs+'>'
       +progressHtml
-      +'<div class="proj-dot" style="background:'+(c==='out' ? packingUrgency(p) : dotCol[c])+'"></div>'
+      +'<div class="proj-dot" style="background:'+(c==='out' ? packingUrgency(p) : itemDot(p,c))+'"></div>'
       +'<div class="proj-body">'
       +'<span class="proj-num">#'+escHtml(p.number)+'</span>'
       +'<span class="proj-name">'+escHtml(p.name)+'</span>'
@@ -1000,15 +1120,42 @@ function render() {
       +'</div>'
       +'<div class="proj-meta">'
       +'<div class="proj-dates">'
-      +'<div class="proj-date-row"><span class="lbl">Start</span><span class="val">'+fmtDate(p.start)+'</span></div>'
+      +'<div class="proj-date-row"><span class="lbl">Gig</span><span class="val">'+fmtDate(p.usage_start)+'</span></div>'
       +'<div class="proj-date-row"><span class="lbl">Return</span><span class="val">'+fmtDate(p.end)+'</span></div>'
       +'</div>'
-      +(c==='out' ? dispatchBtnHtml(p) : '<span class="badge '+badgeCls[c]+'"><i class="ti '+badgeIcon[c]+'"></i>'+badgeLbl[c]+'</span>')
+      +(c==='out' ? dispatchBtnHtml(p) : c==='in' ? returnBtnHtml(p) : '<span class="badge '+badgeCls[c]+'"><i class="ti '+badgeIcon[c]+'"></i>'+badgeLbl[c]+'</span>')
       +'</div>'
       +'</div>';
+    // Bucket into overdue vs active for IN view section headers
+    if (currentView === 'in') {
+      if (classify(p) === 'overdue') overdueCardsList.push(card);
+      else activeCardsList.push(card);
+    }
+    return card;
   }).join('');
 
-  setContent(legend+'<div class="proj-list">'+cards+'</div>');
+  var html = '';
+  if (currentView === 'in') {
+    // cards array is already built in list order (overdue first, then active)
+    // Split cards array by matching list order
+    var overdueCount = list.filter(function(p){ return classify(p)==='overdue'; }).length;
+    var activeCount  = list.length - overdueCount;
+    var cardArr = cards.split('</div></div>').filter(function(s){ return s.trim(); }).map(function(s){ return s+'</div></div>'; });
+    var overdueCards = cardArr.slice(0, overdueCount).join('');
+    var activeCards  = cardArr.slice(overdueCount).join('');
+    if (overdueCount) {
+      html += '<div class="section-head" style="color:var(--red)">Overdue — should already be back <span style="font-weight:400;color:var(--faint)">'+overdueCount+'</span></div>';
+      html += '<div class="proj-list">'+overdueCards+'</div>';
+    }
+    if (activeCount) {
+      html += '<div style="height:56px;position:relative;z-index:20;background:var(--bg)"></div>';
+      html += '<div class="section-head" style="position:relative;z-index:20;background:var(--bg);margin-top:0">Expected back <span style="font-weight:400;color:var(--faint)">'+activeCount+'</span></div>';
+      html += '<div class="proj-list">'+activeCards+'</div>';
+    }
+    setContent(html);
+  } else {
+    setContent(legend+'<div class="proj-list">'+cards+'</div>');
+  }
   if (currentView==='out') setTimeout(loadPackingForVisible, 50);
 }
 
@@ -1214,7 +1361,14 @@ function loadPackingForVisible() {
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
-// Script is at end of body so DOM is ready — run directly
+// Clear any corrupted tokens and re-save clean version
+(function() {
+  var t = loadToken();
+  if (t) {
+    // Re-save with clean value to overwrite any corrupted cookies
+    saveToken(t);
+  }
+})();
 renderTokenUI();
 setView('in');
 if (loadToken()) fetchProjects();
