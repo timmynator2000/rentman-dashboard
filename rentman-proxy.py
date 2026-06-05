@@ -61,6 +61,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         print(f"  → {self.command} {url}")
+        print(f"  Auth header length: {len(auth)}, starts: {auth[:30]}...")
 
         # Read request body for PATCH/PUT
         body = None

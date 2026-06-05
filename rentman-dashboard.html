@@ -6,34 +6,36 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Warehouse Dashboard</title>
+<title>QTECH Rentman Dashboard</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
 <style>
 :root {
-  --bg:           #141412;
-  --surface:      #1e1e1b;
-  --surface2:     #272724;
-  --border:       rgba(255,255,255,0.08);
-  --border-hi:    rgba(255,255,255,0.18);
-  --text:         #f0efe9;
-  --muted:        #a0a09a;
-  --faint:        #5a5a55;
-  --red:          #f07070;
-  --red-bg:       rgba(240,112,112,0.12);
-  --orange:       #f0a040;
-  --orange-bg:    rgba(240,160,64,0.12);
-  --green:        #80c860;
-  --green-bg:     rgba(128,200,96,0.12);
-  --blue:         #60a8f0;
-  --blue-bg:      rgba(96,168,240,0.12);
-  --yellow:       #f0d060;
-  --yellow-bg:    rgba(240,208,96,0.12);
-  --radius:       12px;
-  --radius-sm:    8px;
+  /* QTECH brand palette — deep black, white text, amber accent */
+  --bg:           #0a0a0a;
+  --surface:      #111111;
+  --surface2:     #1a1a1a;
+  --border:       rgba(255,255,255,0.07);
+  --border-hi:    rgba(255,255,255,0.16);
+  --text:         #ffffff;
+  --muted:        #999999;
+  --faint:        #555555;
+  --red:          #ff4d4d;
+  --red-bg:       rgba(255,77,77,0.12);
+  --orange:       #ff8c00;      /* QTECH amber/orange accent */
+  --orange-bg:    rgba(255,140,0,0.12);
+  --green:        #4caf50;
+  --green-bg:     rgba(76,175,80,0.12);
+  --blue:         #2196f3;
+  --blue-bg:      rgba(33,150,243,0.12);
+  --yellow:       #ffc107;
+  --yellow-bg:    rgba(255,193,7,0.12);
+  --radius:       8px;
+  --radius-sm:    5px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 body {
-  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -43,10 +45,10 @@ body {
 
 /* ── HEADER ── */
 .header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: #1d1d1b;
+  border-bottom: 1px solid rgba(255,140,0,0.25);
   padding: 0 1.5rem;
-  height: 56px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -99,13 +101,13 @@ body {
 /* ── STAT CARDS ── */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
 .stat {
-  background: var(--surface); border: 2px solid var(--border);
+  background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 1rem 1.25rem;
   cursor: pointer; transition: border-color .15s, background .15s;
   user-select: none;
 }
-.stat:hover { border-color: var(--border-hi); }
-.stat.active { border-color: var(--text); background: var(--surface2); }
+.stat:hover { border-color: var(--orange); }
+.stat.active { border-color: var(--orange); background: var(--surface2); box-shadow: 0 0 0 1px var(--orange); }
 .stat-icon { font-size: 22px; margin-bottom: 6px; }
 .stat-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .stat-val { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
@@ -166,7 +168,10 @@ body {
   align-items: center;
   gap: 14px;
   transition: border-color .1s;
+  min-width: 0;
+  overflow: hidden;
 }
+.proj-body { min-width: 0; }
 .proj-card:hover { border-color: var(--border-hi); }
 .proj-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .proj-body { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
@@ -174,7 +179,7 @@ body {
 .proj-name { font-size: 14px; font-weight: 600; }
 .proj-loc  { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
 .proj-note { font-size: 12px; font-weight: 700; flex-shrink: 0; }
-.proj-meta { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.proj-meta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .proj-dates { text-align: right; }
 .proj-date-row { display: flex; gap: 8px; justify-content: flex-end; font-size: 12px; margin-bottom: 2px; }
 .proj-date-row .lbl { color: var(--faint); font-size: 11px; min-width: 40px; text-align: right; }
@@ -269,11 +274,11 @@ body {
   white-space: nowrap; flex-shrink: 0;
 }
 .btn-return {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 700; padding: 6px 16px;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700; padding: 5px 12px;
   border-radius: 999px; white-space: nowrap; cursor: pointer;
-  text-transform: uppercase; letter-spacing: .05em;
-  border: 2px solid var(--orange); background: var(--orange-bg); color: var(--orange);
+  text-transform: uppercase; letter-spacing: .05em; flex-shrink: 0;
+  border: 1.5px solid var(--orange); background: var(--orange-bg); color: var(--orange);
   transition: background .15s, transform .1s;
 }
 .btn-return:hover { background: var(--orange); color: var(--bg); transform: scale(1.03); }
@@ -289,12 +294,76 @@ body {
 .spinner { width: 18px; height: 18px; border: 2px solid var(--border-hi); border-top-color: var(--text); border-radius: 50%; animation: spin .6s linear infinite; flex-shrink: 0; }
 
 /* ── SHORTAGE CARDS ── */
+.shortage-proj-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 8px;
+  overflow: hidden;
+}
+.shortage-proj-header {
+  display: grid; grid-template-columns: 10px 1fr auto;
+  align-items: center; gap: 14px;
+  padding: .85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+}
+.shortage-proj-header:hover { background: var(--surface2); }
+.shortage-gear-list { transition: max-height .25s ease, opacity .2s ease; overflow: hidden; }
+.shortage-gear-list.collapsed { max-height: 0 !important; opacity: 0; padding-top: 0; padding-bottom: 0; }
+.shortage-gear-list {
+  padding: .5rem 1.1rem .6rem 2.5rem;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.shortage-gear-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; color: var(--muted);
+}
+.shortage-gear-row .gear-name { flex: 1; }
+.shortage-gear-row .gear-stock {
+  font-weight: 700; color: var(--yellow);
+  background: var(--yellow-bg); padding: 2px 8px;
+  border-radius: 999px; font-size: 11px; white-space: nowrap;
+}
 .shortage-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); padding: .9rem 1.1rem;
   display: grid; grid-template-columns: 10px 1fr auto;
   align-items: center; gap: 14px;
 }
+.kiosk-bar {
+  display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+}
+.btn-kiosk {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; padding: 5px 12px;
+  border-radius: var(--radius-sm); cursor: pointer;
+  text-transform: uppercase; letter-spacing: .06em;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--muted); transition: all .15s;
+}
+.btn-kiosk:hover { border-color: var(--border-hi); color: var(--text); }
+.btn-kiosk.kiosk-in      { border-color: var(--orange); color: var(--orange); background: var(--orange-bg); }
+.btn-kiosk.kiosk-out     { border-color: var(--blue);   color: var(--blue);   background: var(--blue-bg); }
+.btn-kiosk.kiosk-short   { border-color: var(--yellow); color: var(--yellow); background: var(--yellow-bg); }
+
+/* ── KIOSK MODE ── */
+body.kiosk-mode .header     { display: none; }
+body.kiosk-mode .toolbar    { display: none; }
+body.kiosk-mode .stats      { display: none; }
+body.kiosk-mode .kiosk-bar  { display: none; }
+body.kiosk-mode .main       { padding: .75rem 1rem; }
+body.kiosk-mode .kiosk-header {
+  display: flex !important; align-items: center; justify-content: space-between;
+  padding: .75rem 1.25rem; margin-bottom: .75rem;
+  background: #1d1d1b; border-radius: var(--radius);
+  border-bottom: 2px solid var(--orange);
+}
+.kiosk-header { display: none; }
+.kiosk-header .kiosk-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.kiosk-header .kiosk-meta  { font-size: 13px; color: var(--muted); text-align: right; line-height: 1.4; }
+body.kiosk-mode .proj-name { font-size: 16px; }
+body.kiosk-mode .proj-card { padding: 1rem 1.25rem; }
+body.kiosk-mode .btn-return,
+body.kiosk-mode .btn-dispatch { font-size: 11px; padding: 4px 10px; }
 .btn-30d {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 12px; padding: 6px 14px; margin-bottom: 10px;
@@ -314,11 +383,17 @@ body {
 
 <header class="header">
   <div class="header-logo">
-    <i class="ti ti-package"></i>
-    Warehouse Dashboard
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABq8AAAFOAgMAAABlJm82AAAJJmlDQ1BpY2MAAEiJlZVnUJNZF8fv8zzphUASQodQQ5EqJYCUEFoo0quoQOidUEVsiLgCK4qINEWQRQEXXJUia0UUC4uCAhZ0gywCyrpxFVFBWXDfGZ33HT+8/5l7z2/+c+bec8/5cAEgiINlwct7YlK6wNvJjhkYFMwE3yiMn5bC8fR0A9/VuxEArcR7ut/P+a4IEZFp/OW4uLxy+SmCdACg7GXWzEpPWeGjy0wPj//CZ1dYsFzgMt9Y4eh/eexLzr8s+pLj681dfhUKABwp+hsO/4b/c++KVDiC9NioyGymT3JUelaYIJKZttIJHpfL9BQkR8UmRH5T8P+V/B2lR2anr0RucsomQWx0TDrzfw41MjA0BF9n8cbrS48hRv9/z2dFX73kegDYcwAg+7564ZUAdO4CQPrRV09tua+UfAA67vAzBJn/eqiVDQ0IgALoQAYoAlWgCXSBETADlsAWOAAX4AF8QRDYAPggBiQCAcgCuWAHKABFYB84CKpALWgATaAVnAad4Dy4Aq6D2+AuGAaPgRBMgpdABN6BBQiCsBAZokEykBKkDulARhAbsoYcIDfIGwqCQqFoKAnKgHKhnVARVApVQXVQE/QLdA66At2EBqGH0Dg0A/0NfYQRmATTYQVYA9aH2TAHdoV94fVwNJwK58D58F64Aq6HT8Id8BX4NjwMC+GX8BwCECLCQJQRXYSNcBEPJBiJQgTIVqQQKUfqkVakG+lD7iFCZBb5gMKgaCgmShdliXJG+aH4qFTUVlQxqgp1AtWB6kXdQ42jRKjPaDJaHq2DtkDz0IHoaHQWugBdjm5Et6OvoYfRk+h3GAyGgWFhzDDOmCBMHGYzphhzGNOGuYwZxExg5rBYrAxWB2uF9cCGYdOxBdhK7EnsJewQdhL7HkfEKeGMcI64YFwSLg9XjmvGXcQN4aZwC3hxvDreAu+Bj8BvwpfgG/Dd+Dv4SfwCQYLAIlgRfAlxhB2ECkIr4RphjPCGSCSqEM2JXsRY4nZiBfEU8QZxnPiBRCVpk7ikEFIGaS/pOOky6SHpDZlM1iDbkoPJ6eS95CbyVfJT8nsxmpieGE8sQmybWLVYh9iQ2CsKnqJO4VA2UHIo5ZQzlDuUWXG8uIY4VzxMfKt4tfg58VHxOQmahKGEh0SiRLFEs8RNiWkqlqpBdaBGUPOpx6hXqRM0hKZK49L4tJ20Bto12iQdQ2fRefQ4ehH9Z/oAXSRJlTSW9JfMlqyWvCApZCAMDQaPkcAoYZxmjDA+SilIcaQipfZItUoNSc1Ly0nbSkdKF0q3SQ9Lf5RhyjjIxMvsl+mUeSKLktWW9ZLNkj0ie012Vo4uZynHlyuUOy33SB6W15b3lt8sf0y+X35OQVHBSSFFoVLhqsKsIkPRVjFOsUzxouKMEk3JWilWqUzpktILpiSTw0xgVjB7mSJleWVn5QzlOuUB5QUVloqfSp5Km8oTVYIqWzVKtUy1R1WkpqTmrpar1qL2SB2vzlaPUT+k3qc+r8HSCNDYrdGpMc2SZvFYOawW1pgmWdNGM1WzXvO+FkaLrRWvdVjrrjasbaIdo12tfUcH1jHVidU5rDO4Cr3KfFXSqvpVo7okXY5upm6L7rgeQ89NL0+vU++Vvpp+sP5+/T79zwYmBgkGDQaPDamGLoZ5ht2GfxtpG/GNqo3uryavdly9bXXX6tfGOsaRxkeMH5jQTNxNdpv0mHwyNTMVmLaazpipmYWa1ZiNsulsT3Yx+4Y52tzOfJv5efMPFqYW6RanLf6y1LWMt2y2nF7DWhO5pmHNhJWKVZhVnZXQmmkdan3UWmijbBNmU2/zzFbVNsK20XaKo8WJ45zkvLIzsBPYtdvNcy24W7iX7RF7J/tC+wEHqoOfQ5XDU0cVx2jHFkeRk4nTZqfLzmhnV+f9zqM8BR6f18QTuZi5bHHpdSW5+rhWuT5z03YTuHW7w+4u7gfcx9aqr01a2+kBPHgeBzyeeLI8Uz1/9cJ4eXpVez33NvTO9e7zofls9Gn2eedr51vi+9hP0y/Dr8ef4h/i3+Q/H2AfUBogDNQP3BJ4O0g2KDaoKxgb7B/cGDy3zmHdwXWTISYhBSEj61nrs9ff3CC7IWHDhY2UjWEbz4SiQwNCm0MXwzzC6sPmwnnhNeEiPpd/iP8ywjaiLGIm0iqyNHIqyiqqNGo62ir6QPRMjE1MecxsLDe2KvZ1nHNcbdx8vEf88filhICEtkRcYmjiuSRqUnxSb7JicnbyYIpOSkGKMNUi9WCqSOAqaEyD0tandaXTlz/F/gzNjF0Z45nWmdWZ77P8s85kS2QnZfdv0t60Z9NUjmPOT5tRm/mbe3KVc3fkjm/hbKnbCm0N39qzTXVb/rbJ7U7bT+wg7Ijf8VueQV5p3tudATu78xXyt+dP7HLa1VIgViAoGN1tubv2B9QPsT8M7Fm9p3LP58KIwltFBkXlRYvF/OJbPxr+WPHj0t6ovQMlpiVH9mH2Je0b2W+z/0SpRGlO6cQB9wMdZcyywrK3BzcevFluXF57iHAo45Cwwq2iq1Ktcl/lYlVM1XC1XXVbjXzNnpr5wxGHh47YHmmtVagtqv14NPbogzqnuo56jfryY5hjmceeN/g39P3E/qmpUbaxqPHT8aTjwhPeJ3qbzJqamuWbS1rgloyWmZMhJ+/+bP9zV6tua10bo63oFDiVcerFL6G/jJx2Pd1zhn2m9az62Zp2WnthB9SxqUPUGdMp7ArqGjzncq6n27K7/Ve9X4+fVz5ffUHyQslFwsX8i0uXci7NXU65PHsl+spEz8aex1cDr97v9eoduOZ67cZ1x+tX+zh9l25Y3Th/0+LmuVvsW523TW939Jv0t/9m8lv7gOlAxx2zO113ze92D64ZvDhkM3Tlnv296/d5928Prx0eHPEbeTAaMip8EPFg+mHCw9ePMh8tPN4+hh4rfCL+pPyp/NP637V+bxOaCi+M24/3P/N59niCP/Hyj7Q/Fifzn5Ofl08pTTVNG02fn3Gcufti3YvJlykvF2YL/pT4s+aV5quzf9n+1S8KFE2+Frxe+rv4jcyb42+N3/bMec49fZf4bmG+8L3M+xMf2B/6PgZ8nFrIWsQuVnzS+tT92fXz2FLi0tI/QiyQvpNzTVQAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlQTFRF////////HR0b7wNWPwAAAAF0Uk5TAEDm2GYAAAABYktHRACIBR1IAAAACXBIWXMAAABIAAAASABGyWs+AAAAB3RJTUUH5AUaACsJuemOcgAABMBJREFUeNrt0TFSlUEQRlGXaGLCvsxJCHSVJmZQUzh047vF6VD8L8N3vv0YvKfff+9F8PifX997Pv/+bejRDzDF4wdhhYKwQkFYoSCsUBBWKAgrFIQVCsIKBWGFgrBCQVihIKxQEFYoCCsUhBUKwgoFYYWCsEJBWKEgrFAQVigIKxSEFQrCCgVhhYKwQkFYoSCsUBBWKAgrFIQVCsIKBWGFgrBCQVihIKxQEFYoCCsUhBUKwgoFYYWCsEJBWKEgrFAQVigIKxSEFQrCCgVhhYKwQkFYoSCsUBBWKAgrFIQVCsIKBWGFgrBCQVihIKxQEFYoCCsUhBUKwgoFYYWCsEJBWKEgrFAQVigIKxSEFQo+JtZb9+sjH39wiscPwgoFYYWCsEJBWKEgrFAQVigIKxSEFQrCCgVhhYKwQkFYoSCsUBBWKAgrFIQVCsIKBWGFgrBCQVihIKxQEFYoCCsUhBUKwgoFYYWCsEJBWKEgrFAQVigIKxSEFQrCCgVhhYJfEuv1Pz8a1tsvfM/nsG5fBAvW6WDdvggWrNPBun0RLFing3X7IliwTgfr9kWwYJ0O1u2LYME6HazbF8GCdTpYty+CBet0sG5fBAvW6WDdvggWrNPBun0RLFing3X7IliwTgfr9kWwYJ0O1u2LYME6HazbF8GCdTpYty+CBet0sG5fBAvW6WDdvggWrNO9hXX/PFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMGCBQsWLFiwYMFaxhrf9pOCsEJBWKEgrFAQVigIKxSEFQrCCgVhhYKwQkFYoSCsUBBWKAgrFIQVCsIKBWGFgrBCQVihIKxQEFYoCCsUhBUKwgoFYYWCsEJBWKEgrFAQVigIKxSEFQrCCgVhhYKwQkFYoeBXw3rPPf3XIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDsPa2HQ/C2tt2PAhrb9vxIKy9bceDu1g/T7/v5fRDWP/2J77nc1ifGYS1t+14ENbetuNBWHvbjgdh7W07HoS1t+14ENbetuNBWHvbjgdh7W07HoS1t+14ENbetuNBWHvbjgdh7W07HoS1t+14ENbetuNBWHvbjgdh7W07HoS1t+14ENbetuNBWHvbjgdh7W07HoS1t+14ENbetuNBWHvbjgdh7W07HoS1t+148MNYp4nOWO6T7xlW52CFDlboYIUOVuhghQ5W6GCFDlboYIUOVuhghQ5W6GCFDlboYIUOVuhghQ5W6GCFDlboYIUOVuhghQ5W6GCFDlboYIUOVuhghQ5W6GCFDlboYIUOVuhghQ5W6GCFDlboYIUOVuhghQ5W6GCF7vkPmCQleITlgTkAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDUtMjZUMDA6NDM6MDkrMDM6MDBpeDDXAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTA1LTI2VDAwOjQzOjA5KzAzOjAwGCWIawAAACJ0RVh0cHM6SGlSZXNCb3VuZGluZ0JveAAxNzExeDMzNCsxNCsxNMTCoioAAAAcdEVYdHBzOkxldmVsAEFkb2JlLTMuMCBFUFNGLTMuMAqbcLvjAAAAAElFTkSuQmCC" alt="QTECH" style="height:28px;width:auto;display:block" />
+    <span style="color:var(--border-hi);font-weight:300;font-size:14px">|</span>
+    <span style="font-weight:400;color:var(--muted);font-size:13px;letter-spacing:.02em">Rentman Dashboard</span>
   </div>
   <div class="header-right">
     <button onclick="disconnect()" style="font-size:11px;color:var(--faint);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0" title="Clear saved API token">Change API key</button>
+    <div style="width:1px;height:18px;background:var(--border)"></div>
+    <button class="btn-kiosk kiosk-in"    onclick="enterKiosk('in')"       title="Fullscreen kiosk: IN"><i class="ti ti-package-import"></i> IN</button>
+    <button class="btn-kiosk kiosk-out"   onclick="enterKiosk('out')"      title="Fullscreen kiosk: OUT"><i class="ti ti-package-export"></i> OUT</button>
+    <button class="btn-kiosk kiosk-short" onclick="enterKiosk('shortages')" title="Fullscreen kiosk: Shortages"><i class="ti ti-alert-triangle"></i> SHORTAGES</button>
+    <div style="width:1px;height:18px;background:var(--border)"></div>
     <label class="ar-label">
       <input type="checkbox" id="ar-toggle" onchange="toggleAutoRefresh()" />
       Auto-refresh (5 min)
@@ -386,6 +461,19 @@ body {
     </button>
   </div>
 
+  <div class="kiosk-header" id="kiosk-header">
+    <div style="display:flex;align-items:center;gap:14px">
+      <img src="data:image/png;base64,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" alt="QTECH" style="height:32px;width:auto;opacity:.9" />
+      <div>
+        <div class="kiosk-title" id="kiosk-title">IN</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px" id="kiosk-count"></div>
+      </div>
+    </div>
+    <div class="kiosk-meta" id="kiosk-meta"></div>
+    <button onclick="exitKiosk()" style="font-size:12px;padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--muted);cursor:pointer">
+      <i class="ti ti-minimize" style="font-size:13px;vertical-align:-2px"></i> Exit Kiosk
+    </button>
+  </div>
   <div id="content-area">
     <div class="empty-state">
       <i class="ti ti-plug-connected"></i>
@@ -425,16 +513,22 @@ var loadTime      = null;
 // COOKIE / LOCALSTORAGE
 // ─────────────────────────────────────────────
 function saveToken(t) {
-  try { var d=new Date(); d.setTime(d.getTime()+365*864e5); document.cookie='rm_tok='+encodeURIComponent(t)+';expires='+d.toUTCString()+';path=/;SameSite=Lax'; } catch(e){}
+  // Use localStorage as primary — cookies can corrupt tokens with = or ; chars
   try { localStorage.setItem('rm_tok', t); } catch(e){}
+  // Also try cookie with full encodeURIComponent
+  try { var d=new Date(); d.setTime(d.getTime()+365*864e5); document.cookie='rm_tok='+encodeURIComponent(t)+';expires='+d.toUTCString()+';path=/;SameSite=Lax'; } catch(e){}
 }
 function loadToken() {
-  var cookies = document.cookie.split(';').map(function(s){return s.trim();});
-  var c = cookies.find(function(s){return s.startsWith('rm_tok=');})
-       || cookies.find(function(s){return s.startsWith('rm_api_token=');});
-  var t = c ? decodeURIComponent(c.split('=')[1]) : null;
-  if (!t) { try { t = localStorage.getItem('rm_tok') || localStorage.getItem('rm_api_token'); } catch(e){} }
-  // Strip surrounding quotes and any trailing punctuation corruption
+  var t = null;
+  // Prefer localStorage — immune to = sign corruption
+  try { t = localStorage.getItem('rm_tok') || localStorage.getItem('rm_api_token'); } catch(e){}
+  // Fallback to cookie only if localStorage empty
+  if (!t) {
+    var cookies = document.cookie.split(';').map(function(s){return s.trim();});
+    var c = cookies.find(function(s){return s.startsWith('rm_tok=');})
+         || cookies.find(function(s){return s.startsWith('rm_api_token=');});
+    if (c) t = decodeURIComponent(c.split('=')[1]);
+  }
   if (t) t = t.replace(/^["'\s]+|["'\s.]+$/g, '').trim();
   return t || null;
 }
@@ -987,8 +1081,7 @@ function render() {
   if (currentView === 'shortages') { renderShortages(); return; }
 
   var search = (document.getElementById('search-input').value || '').toLowerCase().trim();
-  var overdueCardsList = [];
-  var activeCardsList  = [];
+
 
   var list = projects.filter(function(p) {
     var matchView;
@@ -1016,13 +1109,13 @@ function render() {
       return (dateOnly(a.end)||'9999').localeCompare(dateOnly(b.end)||'9999');
     });
   } else if (currentView==='out') {
-    // Sort: unpacked & urgent first, then by start date
     list.sort(function(a,b) {
       var sa = (a.status||'').toLowerCase().replace(/[^a-z]/g,'');
       var sb = (b.status||'').toLowerCase().replace(/[^a-z]/g,'');
       var aPacked = (sa==='prepped'||sa==='onlocation') ? 1 : 0;
       var bPacked = (sb==='prepped'||sb==='onlocation') ? 1 : 0;
-      if (aPacked !== bPacked) return aPacked - bPacked; // unpacked first
+      // Packed first, then unpacked sorted by start date soonest first
+      if (aPacked !== bPacked) return bPacked - aPacked;
       return (dateOnly(a.start)||'9999').localeCompare(dateOnly(b.start)||'9999');
     });
   }
@@ -1126,33 +1219,13 @@ function render() {
       +(c==='out' ? dispatchBtnHtml(p) : c==='in' ? returnBtnHtml(p) : '<span class="badge '+badgeCls[c]+'"><i class="ti '+badgeIcon[c]+'"></i>'+badgeLbl[c]+'</span>')
       +'</div>'
       +'</div>';
-    // Bucket into overdue vs active for IN view section headers
-    if (currentView === 'in') {
-      if (classify(p) === 'overdue') overdueCardsList.push(card);
-      else activeCardsList.push(card);
-    }
+
     return card;
   }).join('');
 
   var html = '';
   if (currentView === 'in') {
-    // cards array is already built in list order (overdue first, then active)
-    // Split cards array by matching list order
-    var overdueCount = list.filter(function(p){ return classify(p)==='overdue'; }).length;
-    var activeCount  = list.length - overdueCount;
-    var cardArr = cards.split('</div></div>').filter(function(s){ return s.trim(); }).map(function(s){ return s+'</div></div>'; });
-    var overdueCards = cardArr.slice(0, overdueCount).join('');
-    var activeCards  = cardArr.slice(overdueCount).join('');
-    if (overdueCount) {
-      html += '<div class="section-head" style="color:var(--red)">Overdue — should already be back <span style="font-weight:400;color:var(--faint)">'+overdueCount+'</span></div>';
-      html += '<div class="proj-list">'+overdueCards+'</div>';
-    }
-    if (activeCount) {
-      html += '<div style="height:56px;position:relative;z-index:20;background:var(--bg)"></div>';
-      html += '<div class="section-head" style="position:relative;z-index:20;background:var(--bg);margin-top:0">Expected back <span style="font-weight:400;color:var(--faint)">'+activeCount+'</span></div>';
-      html += '<div class="proj-list">'+activeCards+'</div>';
-    }
-    setContent(html);
+    setContent('<div class="proj-list">'+cards+'</div>');
   } else {
     setContent(legend+'<div class="proj-list">'+cards+'</div>');
   }
@@ -1196,17 +1269,30 @@ function loadShortages(days) {
     .then(function(data) {
       if (data) {
         var raw = data.data || data || [];
-        if (done===0 && raw.length)        raw.forEach(function(item) {
-          var s = typeof item.shortage !== 'undefined' ? item.shortage
-                : typeof item.quantity_shortage !== 'undefined' ? item.quantity_shortage : 0;
-          if (s < 0) results.push({
-            name:     item.name || item.equipment_name || item.displayname || 'Unknown item',
-            shortage: s,
-            proj_name:   proj.name,
-            proj_number: proj.number,
-            start: proj.start,
-            end:   proj.end
-          });
+        raw.forEach(function(item) {
+          // Skip crew/labour: ledger /ledgercodes/2 or ledger_debit /ledgercodes/15
+          var ledger      = String(item.ledger || '');
+          var ledgerDebit = String(item.ledger_debit || '');
+          if (ledger.indexOf('/2') !== -1 || ledgerDebit.indexOf('/15') !== -1) return;
+          // Skip consumable sale items: has a factor > 1 and no warehouse tracking
+          if (parseFloat(item.factor || 1) > 1 && parseFloat(item.warehouse_reservations || 0) === 0) return;
+
+          // Only show items where warehouse reservations don't cover planned quantity
+          var qty      = parseFloat(item.quantity || 0);
+          var reserved = parseFloat(item.warehouse_reservations || 0);
+          var shortfall = qty - reserved;
+          if (qty > 0 && shortfall > 0) {
+            results.push({
+              name:        item.name || item.displayname || 'Unknown item',
+              shortage:    -shortfall,
+              qty:         qty,
+              reserved:    reserved,
+              proj_name:   proj.name,
+              proj_number: proj.number,
+              start:       proj.start,
+              end:         proj.end
+            });
+          }
         });
       }
     }).catch(function(){})
@@ -1230,32 +1316,93 @@ function btn30html(currentDays) {
     +'<i class="ti ti-calendar-search"></i> Check next 30 days instead</button></div>';
 }
 
+
+function toggleShortageCard(cid) {
+  var list = document.getElementById(cid);
+  var chev = document.getElementById(cid+'-chev');
+  if (!list) return;
+  var collapsed = list.classList.toggle('collapsed');
+  if (chev) chev.style.transform = collapsed ? 'rotate(-90deg)' : '';
+}
+
 function renderShortages(days) {
   days = days || 7;
   if (!shortages.length) {
     setContent(btn30html(days)+'<div class="empty-state"><i class="ti ti-circle-check"></i><p>No shortages found — all gear accounted for!</p></div>');
     return;
   }
-  var cards = shortages.map(function(item) {
-    var shortage = Math.abs(item.shortage);
-    return '<div class="shortage-card">'
-      +'<div class="proj-dot" style="background:var(--yellow)"></div>'
+
+  var projMap = {};
+  shortages.forEach(function(item) {
+    var key = item.proj_number;
+    if (!projMap[key]) projMap[key] = { number:item.proj_number, name:item.proj_name, start:item.start, end:item.end, items:[] };
+    projMap[key].items.push(item);
+  });
+
+  var projs = Object.values(projMap);
+  projs.sort(function(a,b) {
+    var ap = projects.find(function(p){ return p.number == a.number; });
+    var bp = projects.find(function(p){ return p.number == b.number; });
+    var ad = ap ? dateOnly(ap.usage_start || ap.start) : dateOnly(a.start);
+    var bd = bp ? dateOnly(bp.usage_start || bp.start) : dateOnly(b.start);
+    return (ad||'9999').localeCompare(bd||'9999');
+  });
+
+  var html = projs.map(function(proj) {
+    var dSt = daysFromNow(proj.start);
+    var urgColor = dSt !== null && dSt <= 1 ? 'var(--red)' : dSt !== null && dSt <= 3 ? 'var(--orange)' : 'var(--yellow)';
+    var urgLabel = dSt === 0 ? 'TODAY' : dSt === 1 ? 'TOMORROW' : dSt !== null && dSt > 0 ? 'in '+dSt+' days' : 'OVERDUE';
+    var cid = 'sg-'+proj.number;
+
+    var gearRows = proj.items.map(function(item) {
+      var shortfall = Math.max(0, item.qty - item.reserved);
+      var tag = '';
+      if (item.reserved > 0 && shortfall > 0) {
+        var projStart = dateOnly(proj.start);
+        var projEnd   = dateOnly(proj.end);
+        var overlapping = projects.filter(function(p) {
+          if (classify(p) !== 'in') return false;
+          var ps = dateOnly(p.start), pe = dateOnly(p.end);
+          return pe && ps && pe >= projStart && ps <= (projEnd || projStart);
+        });
+        var overlapShort = overlapping.slice(0,2).map(function(p){ return '#'+p.number; }).join(', ');
+        if (overlapping.length > 2) overlapShort += ' +' + (overlapping.length-2) + ' more';
+        var tooltip = overlapping.map(function(p){ return '#'+p.number+' - '+p.name; }).join('&#10;');
+        tag = '<span title="'+escHtml(tooltip)+'" style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;cursor:help;'
+            + 'background:rgba(96,168,240,0.12);color:var(--blue);border:1px solid rgba(96,168,240,0.3);white-space:nowrap">'
+            + '<i class="ti ti-refresh" style="font-size:10px"></i> Needs repacking'+(overlapping.length?' from '+overlapShort:'')+'</span>';
+      }
+      var stockInfo = item.reserved+'/'+item.qty+' — need '+shortfall+' more';
+      return '<div class="shortage-gear-row" style="flex-wrap:wrap;gap:6px">'
+        +'<i class="ti ti-alert-circle" style="font-size:12px;color:var(--yellow);flex-shrink:0"></i>'
+        +'<span class="gear-name">'+escHtml(item.name)+'</span>'
+        +'<span class="gear-stock">'+stockInfo+'</span>'
+        +tag
+        +'</div>';
+    }).join('');
+
+    return '<div class="shortage-proj-card">'
+      +'<div class="shortage-proj-header" onclick="toggleShortageCard(\''+cid+'\')">' 
+      +'<div class="proj-dot" style="background:'+urgColor+'"></div>'
       +'<div class="proj-body">'
-      +'<span class="proj-num">#'+escHtml(item.proj_number)+'</span>'
-      +'<span class="proj-name">'+escHtml(item.name)+'</span>'
-      +'<span class="proj-loc"><i class="ti ti-folder"></i>'+escHtml(item.proj_name)+'</span>'
-      +'<span class="proj-note c-yellow">'+shortage+(shortage===1?' unit':' units')+' short</span>'
+      +'<span class="proj-num">#'+escHtml(proj.number)+'</span>'
+      +'<span class="proj-name">'+escHtml(proj.name)+'</span>'
+      +'<span class="proj-note" style="color:'+urgColor+'">Gig '+urgLabel+'</span>'
+      +'<span class="badge badge-shortage" style="font-size:10px;padding:2px 8px"><i class="ti ti-alert-triangle"></i>'+proj.items.length+' item'+(proj.items.length===1?'':'s')+' short</span>'
       +'</div>'
-      +'<div class="proj-meta">'
+      +'<div style="display:flex;align-items:center;gap:12px">'
       +'<div class="proj-dates">'
-      +'<div class="proj-date-row"><span class="lbl">Goes out</span><span class="val">'+fmtDate(item.start)+'</span></div>'
-      +'<div class="proj-date-row"><span class="lbl">Returns</span><span class="val">'+fmtDate(item.end)+'</span></div>'
+      +'<div class="proj-date-row"><span class="lbl">Gig</span><span class="val">'+fmtDate(proj.start)+'</span></div>'
+      +'<div class="proj-date-row"><span class="lbl">Return</span><span class="val">'+fmtDate(proj.end)+'</span></div>'
       +'</div>'
-      +'<span class="badge badge-shortage"><i class="ti ti-alert-triangle"></i>Subhire needed</span>'
+      +'<i class="ti ti-chevron-down" id="'+cid+'-chev" style="font-size:16px;color:var(--muted);transition:transform .2s;flex-shrink:0"></i>'
       +'</div>'
+      +'</div>'
+      +'<div class="shortage-gear-list" id="'+cid+'" style="max-height:600px;opacity:1">'+gearRows+'</div>'
       +'</div>';
   }).join('');
-  setContent(btn30html(days)+'<div class="proj-list">'+cards+'</div>');
+
+  setContent(btn30html(days)+html);
 }
 
 // ─────────────────────────────────────────────
@@ -1357,6 +1504,71 @@ function loadPackingForVisible() {
     });
   });
 }
+
+// ─────────────────────────────────────────────
+// KIOSK MODE
+// ─────────────────────────────────────────────
+var kioskTimer = null;
+var kioskView  = null;
+
+function enterKiosk(view) {
+  kioskView = view;
+  setView(view);
+
+  // Go fullscreen
+  var el = document.documentElement;
+  if (el.requestFullscreen)      el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+
+  document.body.classList.add('kiosk-mode');
+
+  // Update kiosk header
+  var titles   = { in:'ON ITS WAY IN', out:'ON ITS WAY OUT', shortages:'SHORTAGES' };
+  var colors   = { in:'var(--orange)',  out:'var(--blue)',    shortages:'var(--yellow)' };
+  var titleEl  = document.getElementById('kiosk-title');
+  if (titleEl) { titleEl.textContent = titles[view]||view.toUpperCase(); titleEl.style.color = colors[view]||''; }
+
+  updateKioskMeta();
+
+  // Auto-refresh every 5 minutes
+  if (kioskTimer) clearInterval(kioskTimer);
+  kioskTimer = setInterval(function() {
+    fetchProjects();
+    if (kioskView === 'shortages' && !shortagesLoaded) loadShortages(7);
+    updateKioskMeta();
+  }, 5 * 60 * 1000);
+
+  // Update clock every 30s
+  setInterval(updateKioskMeta, 30000);
+}
+
+function exitKiosk() {
+  document.body.classList.remove('kiosk-mode');
+  if (kioskTimer) { clearInterval(kioskTimer); kioskTimer = null; }
+  if (document.exitFullscreen)           document.exitFullscreen();
+  else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+}
+
+function updateKioskMeta() {
+  var meta = document.getElementById('kiosk-meta');
+  var count = document.getElementById('kiosk-count');
+  if (!meta) return;
+  var now = new Date();
+  var timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  var dateStr = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
+  meta.innerHTML = '<div style="font-size:18px;font-weight:600">' + timeStr + '</div>'
+                 + '<div>' + dateStr + '</div>';
+  // Update count in subtitle
+  if (count && kioskView) {
+    var c = document.getElementById('s-'+kioskView);
+    if (c) count.textContent = c.textContent + ' projects';
+  }
+}
+
+// Exit kiosk on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.body.classList.contains('kiosk-mode')) exitKiosk();
+});
 
 // ─────────────────────────────────────────────
 // INIT
