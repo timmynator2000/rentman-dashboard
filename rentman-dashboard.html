@@ -2,349 +2,370 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Rentman Dashboard</title>
+<title>Warehouse Dashboard</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
 <style>
-  :root {
-    --bg: #f5f4f1;
-    --surface: #ffffff;
-    --surface2: #f0eeea;
-    --border: rgba(0,0,0,0.1);
-    --border-strong: rgba(0,0,0,0.2);
-    --text: #1a1a18;
-    --text-muted: #6b6b67;
-    --text-faint: #9e9e9a;
-    --orange: #ba7517;
-    --orange-bg: #faeeda;
-    --blue: #185fa5;
-    --blue-bg: #e6f1fb;
-    --green: #3b6d11;
-    --green-bg: #eaf3de;
-    --red: #a32d2d;
-    --red-bg: #fcebeb;
-    --purple: #534ab7;
-    --purple-bg: #eeedfe;
-    --radius: 10px;
-    --radius-sm: 6px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #181816;
-      --surface: #232320;
-      --surface2: #2c2c2a;
-      --border: rgba(255,255,255,0.1);
-      --border-strong: rgba(255,255,255,0.2);
-      --text: #f0efe9;
-      --text-muted: #a0a09a;
-      --text-faint: #666662;
-      --orange: #ef9f27;
-      --orange-bg: #3a2800;
-      --blue: #85b7eb;
-      --blue-bg: #042c53;
-      --green: #97c459;
-      --green-bg: #173404;
-      --red: #f09595;
-      --red-bg: #501313;
-      --purple: #afa9ec;
-      --purple-bg: #26215c;
-    }
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 15px; }
-  body {
-    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.5;
-  }
+:root {
+  --bg:           #141412;
+  --surface:      #1e1e1b;
+  --surface2:     #272724;
+  --border:       rgba(255,255,255,0.08);
+  --border-hi:    rgba(255,255,255,0.18);
+  --text:         #f0efe9;
+  --muted:        #a0a09a;
+  --faint:        #5a5a55;
+  --red:          #f07070;
+  --red-bg:       rgba(240,112,112,0.12);
+  --orange:       #f0a040;
+  --orange-bg:    rgba(240,160,64,0.12);
+  --green:        #80c860;
+  --green-bg:     rgba(128,200,96,0.12);
+  --blue:         #60a8f0;
+  --blue-bg:      rgba(96,168,240,0.12);
+  --yellow:       #f0d060;
+  --yellow-bg:    rgba(240,208,96,0.12);
+  --radius:       12px;
+  --radius-sm:    8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.5;
+}
 
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 58px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-left { display: flex; align-items: center; gap: 10px; }
-  .header-logo { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; }
-  .header-logo span { color: var(--text-muted); font-weight: 400; }
-  .header-right { display: flex; align-items: center; gap: 12px; }
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-logo { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.header-logo i { font-size: 20px; color: var(--muted); }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.status-bar { text-align: right; line-height: 1.3; }
+.status-bar .sb-count { font-size: 12px; font-weight: 500; color: var(--muted); }
+.status-bar .sb-time  { font-size: 11px; color: var(--faint); }
 
-  .token-pill {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 999px; padding: 5px 14px 5px 10px;
-    font-size: 13px; color: var(--text-muted);
-  }
-  .token-pill i { font-size: 15px; }
-  .token-pill .connected { color: var(--green); font-weight: 500; }
-  .token-pill button {
-    background: none; border: none; cursor: pointer;
-    color: var(--text-muted); font-size: 12px; padding: 0; margin-left: 4px;
-    text-decoration: underline;
-  }
-  .token-pill button:hover { color: var(--text); }
+/* ── TOKEN ── */
+.token-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 5px 14px 5px 10px;
+  font-size: 13px; color: var(--muted);
+}
+.token-pill .ok { color: var(--green); font-weight: 500; }
+.token-pill button { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 12px; text-decoration: underline; padding: 0; margin-left: 4px; }
+.token-input-wrap { display: flex; gap: 8px; }
+.token-input-wrap input {
+  font-size: 13px; padding: 6px 12px;
+  border: 1.5px solid rgba(255,255,255,0.35); border-radius: 999px;
+  background: var(--surface2); color: var(--text); width: 220px; outline: none;
+}
+.token-input-wrap input:focus { border-color: var(--text); }
+.btn-connect {
+  font-size: 13px; padding: 6px 16px;
+  border: 1px solid var(--border-hi); border-radius: 999px;
+  background: var(--text); color: var(--bg);
+  cursor: pointer; font-weight: 600;
+}
 
-  .token-input-wrap { display: flex; align-items: center; gap: 8px; }
-  .token-input-wrap input {
-    font-size: 13px; padding: 6px 12px;
-    border: 1px solid var(--border-strong);
-    border-radius: 999px;
-    background: var(--surface2);
-    color: var(--text);
-    width: 230px;
-    outline: none;
-  }
-  .token-input-wrap input:focus { border-color: var(--text); }
-  .btn-connect {
-    font-size: 13px; padding: 6px 16px;
-    border: 1px solid var(--border-strong);
-    border-radius: 999px;
-    background: var(--text); color: var(--surface);
-    cursor: pointer; font-weight: 500;
-  }
-  .btn-connect:hover { opacity: .8; }
+/* ── AUTO REFRESH TOGGLE ── */
+.ar-label { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
-  .auto-refresh-label {
-    font-size: 12px; color: var(--text-muted);
-    display: flex; align-items: center; gap: 5px;
-    cursor: pointer; user-select: none;
-  }
+/* ── MAIN ── */
+.main { max-width: 1400px; margin: 0 auto; padding: 1.25rem 1.5rem 3rem; }
 
-  .main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+/* ── ERROR ── */
+.error-box {
+  background: var(--red-bg); border: 1px solid var(--red);
+  border-radius: var(--radius-sm); padding: .75rem 1rem;
+  font-size: 13px; color: var(--red); margin-bottom: 1rem;
+  display: flex; gap: 8px; align-items: flex-start;
+}
 
-  .error-box {
-    background: var(--red-bg); border: 1px solid var(--red);
-    border-radius: var(--radius-sm); padding: .75rem 1rem;
-    font-size: 13px; color: var(--red); margin-bottom: 1rem;
-    display: flex; align-items: flex-start; gap: 8px;
-  }
-  .error-box i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+/* ── STAT CARDS ── */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.stat {
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 1rem 1.25rem;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  user-select: none;
+}
+.stat:hover { border-color: var(--border-hi); }
+.stat.active { border-color: var(--text); background: var(--surface2); }
+.stat-icon { font-size: 22px; margin-bottom: 6px; }
+.stat-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.stat-val { font-size: 36px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.stat-sub { font-size: 12px; color: var(--faint); margin-top: 5px; }
+.c-red    { color: var(--red); }
+.c-orange { color: var(--orange); }
+.c-green  { color: var(--green); }
+.c-blue   { color: var(--blue); }
+.c-yellow { color: var(--yellow); }
 
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    margin-bottom: 1.25rem;
-  }
-  @media (max-width: 800px) { .stats { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 480px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+/* ── TOOLBAR ── */
+.toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+.search-wrap { position: relative; }
+.search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--muted); pointer-events: none; }
+.search-wrap input {
+  padding: 8px 12px 8px 32px; font-size: 13px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); outline: none; width: 230px;
+}
+.search-wrap input:focus { border-color: var(--border-hi); }
+.win-select {
+  font-size: 13px; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface); color: var(--text);
+  outline: none; cursor: pointer; display: none;
+}
+.win-select.visible { display: block; }
+.btn-refresh {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; padding: 8px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--muted); cursor: pointer;
+  transition: color .15s; margin-left: auto;
+}
+.btn-refresh:hover { color: var(--text); border-color: var(--border-hi); }
+.btn-refresh.spinning i { animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  .stat {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: .9rem 1rem;
-    cursor: pointer; transition: border-color .15s;
-  }
-  .stat:hover { border-color: var(--border-strong); }
-  .stat.active { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
-  .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
-  .stat-val { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
-  .stat-val.orange { color: var(--orange); }
-  .stat-val.blue   { color: var(--blue); }
-  .stat-val.green  { color: var(--green); }
-  .stat-val.red    { color: var(--red); }
-  .stat-sub { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+/* ── SECTION HEADER ── */
+.section-head {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin: 1.25rem 0 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  .toolbar {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 1rem; flex-wrap: wrap;
-  }
-  .search-wrap { position: relative; }
-  .search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--text-muted); pointer-events: none; }
-  .search-wrap input {
-    padding: 7px 12px 7px 32px; font-size: 13px;
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--surface); color: var(--text); outline: none; width: 240px;
-  }
-  .search-wrap input:focus { border-color: var(--border-strong); }
+/* ── PROJECT CARDS ── */
+.proj-list { display: flex; flex-direction: column; gap: 6px; }
+.proj-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .9rem 1.1rem;
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  transition: border-color .1s;
+}
+.proj-card:hover { border-color: var(--border-hi); }
+.proj-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.proj-body { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.proj-num  { font-size: 12px; color: var(--faint); flex-shrink: 0; }
+.proj-name { font-size: 14px; font-weight: 600; }
+.proj-loc  { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+.proj-note { font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.proj-meta { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.proj-dates { text-align: right; }
+.proj-date-row { display: flex; gap: 8px; justify-content: flex-end; font-size: 12px; margin-bottom: 2px; }
+.proj-date-row .lbl { color: var(--faint); font-size: 11px; min-width: 40px; text-align: right; }
+.proj-date-row .val { font-weight: 600; min-width: 96px; text-align: right; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; padding: 4px 11px;
+  border-radius: 999px; white-space: nowrap;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.badge i { font-size: 12px; }
+.packing-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; padding: 3px 10px;
+  border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.packing-badge i { font-size: 12px; }
+.proj-card { position: relative; overflow: hidden; }
+.proj-progress-bg {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  background: var(--green); opacity: 0.08;
+  transition: width .6s ease; pointer-events: none;
+  border-radius: var(--radius);
+}
+.proj-progress-label {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  white-space: nowrap; flex-shrink: 0;
+}
+.proj-progress-label.done { color: var(--green); }
+.proj-progress-label.urgent { color: var(--red); }
+.dispatch-warning {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px;
+  white-space: nowrap; flex-shrink: 0;
+  animation: pulse-warn 1.4s ease-in-out infinite;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.dispatch-warning.critical {
+  background: rgba(240,80,80,0.18); color: #ff6060;
+  border: 1px solid rgba(240,80,80,0.4);
+}
+.dispatch-warning.warn {
+  background: rgba(240,160,64,0.18); color: var(--orange);
+  border: 1px solid rgba(240,160,64,0.4);
+}
+@keyframes pulse-warn {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+.pack-legend {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 11px; color: var(--muted); margin-bottom: 10px;
+  padding: 8px 12px; background: var(--surface); border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.legend-title { font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); margin-right: 4px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.badge-in       { background: var(--orange-bg); color: var(--orange); }
+.badge-out      { background: var(--blue-bg);   color: var(--blue); }
+.badge-overdue  { background: var(--red-bg);    color: var(--red); }
+.badge-shortage { background: var(--yellow-bg); color: var(--yellow); }
+.btn-dispatch {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; padding: 6px 16px;
+  border-radius: 999px; white-space: nowrap; cursor: pointer;
+  text-transform: uppercase; letter-spacing: .05em;
+  border: 2px solid var(--green); background: var(--green-bg); color: var(--green);
+  transition: background .15s, transform .1s;
+}
+.btn-dispatch:hover { background: var(--green); color: var(--bg); transform: scale(1.03); }
+.btn-dispatch:active { transform: scale(0.97); }
+.btn-dispatch:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-dispatch.dispatching { opacity: .6; cursor: wait; }
 
-  .sort-select {
-    font-size: 13px; padding: 7px 10px; border: 1px solid var(--border);
-    border-radius: var(--radius-sm); background: var(--surface); color: var(--text);
-    outline: none; cursor: pointer;
-  }
+/* ── EMPTY / LOADING ── */
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+.empty-state i { font-size: 44px; display: block; margin: 0 auto 12px; opacity: .3; }
+.empty-state p { font-size: 14px; max-width: 320px; margin: 0 auto; line-height: 1.6; }
+.loading-state { display: flex; align-items: center; gap: 10px; padding: 2rem; color: var(--muted); font-size: 14px; }
+.spinner { width: 18px; height: 18px; border: 2px solid var(--border-hi); border-top-color: var(--text); border-radius: 50%; animation: spin .6s linear infinite; flex-shrink: 0; }
 
-  .btn-refresh {
-    display: flex; align-items: center; gap: 6px;
-    font-size: 13px; padding: 7px 14px;
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--surface); color: var(--text-muted); cursor: pointer;
-  }
-  .btn-refresh:hover { color: var(--text); border-color: var(--border-strong); }
-  .btn-refresh.spinning i { animation: spin .6s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ── SHORTAGE CARDS ── */
+.shortage-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: .9rem 1.1rem;
+  display: grid; grid-template-columns: 10px 1fr auto;
+  align-items: center; gap: 14px;
+}
+.btn-30d {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; padding: 6px 14px; margin-bottom: 10px;
+  border: 1px solid var(--orange); border-radius: var(--radius-sm);
+  background: transparent; color: var(--orange); cursor: pointer;
+}
+.btn-30d:hover { background: var(--orange-bg); }
 
-  .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-  .last-updated { font-size: 11px; color: var(--text-faint); }
-
-  .section-head {
-    font-size: 11px; font-weight: 600; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: .08em;
-    margin-bottom: 8px; margin-top: 1.5rem;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  .proj-list { display: flex; flex-direction: column; gap: 6px; }
-
-  .proj-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: .85rem 1.1rem;
-    display: grid;
-    grid-template-columns: 12px 1fr auto;
-    align-items: center;
-    gap: 14px;
-    transition: border-color .1s;
-  }
-  .proj-card:hover { border-color: var(--border-strong); }
-  .proj-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-  .proj-body { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .proj-number { font-size: 12px; color: var(--text-faint); min-width: 36px; }
-  .proj-name { font-size: 14px; font-weight: 500; }
-  .proj-location { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 3px; }
-  .proj-location i { font-size: 13px; }
-  .proj-note { font-size: 11px; font-weight: 600; }
-
-  .proj-meta { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-  .proj-dates-block { text-align: right; }
-  .proj-date-row { display: flex; align-items: center; gap: 6px; justify-content: flex-end; font-size: 12px; margin-bottom: 2px; }
-  .proj-date-row .lbl { color: var(--text-faint); font-size: 11px; min-width: 38px; text-align: right; }
-  .proj-date-row .val { font-weight: 500; min-width: 96px; text-align: right; }
-
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11px; font-weight: 600; padding: 3px 10px;
-    border-radius: 999px; white-space: nowrap; flex-shrink: 0;
-  }
-  .badge i { font-size: 12px; }
-  .badge-returning { background: var(--orange-bg); color: var(--orange); }
-  .badge-departing  { background: var(--blue-bg);   color: var(--blue); }
-  .badge-active     { background: var(--green-bg);  color: var(--green); }
-  .badge-overdue    { background: var(--red-bg);    color: var(--red); }
-  .badge-upcoming   { background: var(--purple-bg); color: var(--purple); }
-
-  .empty-state {
-    text-align: center; padding: 4rem 2rem;
-    color: var(--text-muted); font-size: 14px;
-  }
-  .empty-state i { font-size: 40px; display: block; margin: 0 auto 12px; opacity: .4; }
-  .empty-state p { max-width: 340px; margin: 0 auto; line-height: 1.6; }
-
-  .loading-state {
-    display: flex; align-items: center; gap: 10px;
-    padding: 2.5rem 1rem; color: var(--text-muted); font-size: 14px;
-  }
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid var(--border-strong);
-    border-top-color: var(--text);
-    border-radius: 50%; animation: spin .6s linear infinite; flex-shrink: 0;
-  }
-
-  @media (max-width: 700px) {
-    .header { padding: 0 1rem; }
-    .main { padding: 1rem; }
-    .proj-card { grid-template-columns: 10px 1fr; }
-    .proj-meta { display: none; }
-  }
+@media (max-width: 900px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .proj-card { grid-template-columns: 10px 1fr; }
+  .proj-meta { display: none; }
+}
 </style>
 </head>
 <body>
 
 <header class="header">
-  <div class="header-left">
-    <i class="ti ti-calendar-event" style="font-size:20px;color:var(--text-muted)"></i>
-    <div class="header-logo">Rentman <span>Operations</span></div>
+  <div class="header-logo">
+    <i class="ti ti-package"></i>
+    Warehouse Dashboard
   </div>
   <div class="header-right">
-    <label class="auto-refresh-label">
-      <input type="checkbox" id="auto-refresh-toggle" onchange="toggleAutoRefresh()" />
+    <button onclick="disconnect()" style="font-size:11px;color:var(--faint);background:none;border:none;cursor:pointer;text-decoration:underline;padding:0" title="Clear saved API token">Change API key</button>
+    <label class="ar-label">
+      <input type="checkbox" id="ar-toggle" onchange="toggleAutoRefresh()" />
       Auto-refresh (5 min)
     </label>
-    <div id="token-area"></div>
+    <div id="token-area">
+      <div class="token-input-wrap">
+        <input type="password" id="tok-field" placeholder="Paste API token…" onkeydown="if(event.key==='Enter')connect()" />
+        <button class="btn-connect" onclick="connect()">Connect</button>
+      </div>
+    </div>
   </div>
 </header>
 
 <main class="main">
   <div id="error-area"></div>
 
+  <!-- STAT CARDS -->
   <div class="stats">
-    <div class="stat" onclick="setFilter('overdue')" id="stat-overdue">
+    <div class="stat" id="stat-overdue" onclick="setView('overdue')">
+      <div class="stat-icon c-red"><i class="ti ti-alarm"></i></div>
       <div class="stat-label">Overdue</div>
-      <div class="stat-val red" id="s-overdue">–</div>
-      <div class="stat-sub">past return date</div>
+      <div class="stat-val c-red" id="s-overdue">–</div>
+      <div class="stat-sub">not back yet</div>
     </div>
-    <div class="stat" onclick="setFilter('returning')" id="stat-returning">
-      <div class="stat-label">Returning</div>
-      <div class="stat-val orange" id="s-returning">–</div>
-      <div class="stat-sub">due back</div>
+    <div class="stat" id="stat-in" onclick="setView('in')">
+      <div class="stat-icon c-orange"><i class="ti ti-package-import"></i></div>
+      <div class="stat-label">On its way IN</div>
+      <div class="stat-val c-orange" id="s-in">–</div>
+      <div class="stat-sub">due back soon</div>
     </div>
-    <div class="stat" onclick="setFilter('active')" id="stat-active">
-      <div class="stat-label">Active</div>
-      <div class="stat-val green" id="s-active">–</div>
-      <div class="stat-sub">currently out</div>
+    <div class="stat" id="stat-out" onclick="setView('out')">
+      <div class="stat-icon c-blue"><i class="ti ti-package-export"></i></div>
+      <div class="stat-label">On its way OUT</div>
+      <div class="stat-val c-blue" id="s-out">–</div>
+      <div class="stat-sub">departing soon</div>
     </div>
-    <div class="stat" onclick="setFilter('departing')" id="stat-departing">
-      <div class="stat-label">Departing (7d)</div>
-      <div class="stat-val blue" id="s-departing">–</div>
-      <div class="stat-sub">going out soon</div>
-    </div>
-    <div class="stat" onclick="setFilter('all')" id="stat-all">
-      <div class="stat-label">All loaded</div>
-      <div class="stat-val" id="s-all">–</div>
-      <div class="stat-sub">projects total</div>
+    <div class="stat" id="stat-shortages" onclick="setView('shortages')">
+      <div class="stat-icon c-yellow"><i class="ti ti-alert-triangle"></i></div>
+      <div class="stat-label">Shortages</div>
+      <div class="stat-val c-yellow" id="s-shortages">–</div>
+      <div class="stat-sub">departing 7 days</div>
     </div>
   </div>
 
+  <!-- TOOLBAR -->
   <div class="toolbar">
     <div class="search-wrap">
       <i class="ti ti-search"></i>
-      <input type="text" id="search-input" placeholder="Search name, number, location…" oninput="renderProjects()" />
+      <input type="text" id="search-input" placeholder="Search project name or number…" oninput="render()" />
     </div>
-    <select class="sort-select" id="overdue-window" onchange="renderProjects()" style="border-color:var(--red);color:var(--red)" title="Overdue window (only affects Overdue filter)">
-      <option value="7">Overdue: last 7 days</option>
-      <option value="30">Overdue: last 30 days</option>
-      <option value="all">Overdue: all time</option>
+    <!-- Overdue window -->
+    <select class="win-select" id="win-overdue" onchange="overdueWin=this.value; render()">
+      <option value="7" selected>Last 7 days</option>
+      <option value="30">Last 30 days</option>
+      <option value="all">All time</option>
     </select>
-    <select class="sort-select" id="returning-window" onchange="renderProjects()" style="border-color:var(--orange);color:var(--orange)" title="Returning window (only affects Returning filter)">
-      <option value="1">Returning: today</option>
-      <option value="2">Returning: today &amp; tomorrow</option>
-      <option value="7" selected>Returning: next 7 days</option>
-      <option value="30">Returning: next 30 days</option>
-      <option value="all">Returning: all</option>
+    <!-- In window -->
+    <select class="win-select" id="win-in" onchange="inWin=this.value; updateStats(); render()">
+      <option value="1">Due back today</option>
+      <option value="2">Today &amp; tomorrow</option>
+      <option value="7" selected>Next 7 days</option>
+      <option value="30">Next 30 days</option>
+      <option value="all">All currently out</option>
     </select>
-    <select class="sort-select" id="departing-window" onchange="renderProjects()" style="border-color:var(--blue);color:var(--blue)" title="Departing window (only affects Departing filter)">
-      <option value="1">Departing: today</option>
-      <option value="2">Departing: today &amp; tomorrow</option>
-      <option value="7" selected>Departing: next 7 days</option>
-      <option value="30">Departing: next 30 days</option>
-      <option value="all">Departing: all</option>
+    <!-- Out window -->
+    <select class="win-select" id="win-out" onchange="outWin=this.value; updateStats(); render()">
+      <option value="1">Departing today</option>
+      <option value="2">Today &amp; tomorrow</option>
+      <option value="7" selected>Next 7 days</option>
+      <option value="30">Next 30 days</option>
+      <option value="all">All upcoming</option>
     </select>
-    <select class="sort-select" id="sort-select" onchange="renderProjects()">
-      <option value="end-desc">Sort: Return date ↓ (newest)</option>
-      <option value="end-asc">Sort: Return date ↑</option>
-      <option value="start-asc">Sort: Start date ↑</option>
-      <option value="number-asc">Sort: Project # ↑</option>
-    </select>
-    <div class="toolbar-right">
-      <span class="last-updated" id="last-updated"></span>
-      <button class="btn-refresh" id="refresh-btn" onclick="fetchData()">
-        <i class="ti ti-refresh"></i> Refresh
-      </button>
-    </div>
+    <div class="status-bar" id="status-bar" style="margin-left:auto;margin-right:8px"></div>
+    <button class="btn-refresh" id="refresh-btn" onclick="fetchProjects()">
+      <i class="ti ti-refresh"></i> Refresh
+    </button>
   </div>
 
-  <div id="projects-area">
+  <div id="content-area">
     <div class="empty-state">
       <i class="ti ti-plug-connected"></i>
       <p>Enter your Rentman API token in the top-right corner to get started.</p>
@@ -352,404 +373,857 @@
   </div>
 </main>
 
+<script src="config.js" onerror="void(0)"></script>
 <script>
-// ── Cookie + localStorage helpers ───────────────────────────────
-function setCookie(name, value, days) {
-  var d = new Date();
-  d.setTime(d.getTime() + days * 86400000);
-  document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
-}
-function getCookie(name) {
-  var v = document.cookie.split(';').map(function(c){ return c.trim(); }).find(function(c){ return c.startsWith(name + '='); });
-  return v ? decodeURIComponent(v.split('=')[1]) : null;
-}
-function deleteCookie(name) {
-  document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;';
-}
+// Auto-load token from config.js (written by START-DASHBOARD.bat)
+// config.js is loaded above so window.RENTMAN_API_TOKEN is now set
+(function() {
+  if (window.RENTMAN_API_TOKEN) {
+    var t = window.RENTMAN_API_TOKEN;
+    try { var d=new Date(); d.setTime(d.getTime()+365*864e5); document.cookie='rm_tok='+encodeURIComponent(t)+';expires='+d.toUTCString()+';path=/;SameSite=Lax'; } catch(e){}
+    try { localStorage.setItem('rm_tok', t); } catch(e){}
+    console.log('config.js: token loaded, length='+t.length);
+  } else {
+    console.log('config.js: no token found (RENTMAN_API_TOKEN not set)');
+  }
+})();
+// ─────────────────────────────────────────────
+// STATE — single source of truth
+// ─────────────────────────────────────────────
+var projects      = [];      // all loaded projects (normalised)
+var shortages     = [];      // loaded shortage items
+var packingCache  = {};      // projectId -> { pct, packed, total }
+var currentView   = 'in';   // active tab
+var overdueWin    = '7';
+var inWin         = '7';
+var outWin        = '7';
+var shortagesLoaded = false;
+var autoRefreshTimer = null;
+var statusTimer   = null;
+var loadTime      = null;
+
+// ─────────────────────────────────────────────
+// COOKIE / LOCALSTORAGE
+// ─────────────────────────────────────────────
 function saveToken(t) {
-  try { setCookie('rm_api_token', t, 365); } catch(e) {}
-  try { localStorage.setItem('rm_api_token', t); } catch(e) {}
+  try { var d=new Date(); d.setTime(d.getTime()+365*864e5); document.cookie='rm_tok='+encodeURIComponent(t)+';expires='+d.toUTCString()+';path=/;SameSite=Lax'; } catch(e){}
+  try { localStorage.setItem('rm_tok', t); } catch(e){}
 }
 function loadToken() {
-  return getCookie('rm_api_token') || (function(){ try { return localStorage.getItem('rm_api_token'); } catch(e) { return null; } })() || null;
+  // Check both cookie names (rm_tok = current, rm_api_token = legacy)
+  var cookies = document.cookie.split(';').map(function(s){return s.trim();});
+  var c = cookies.find(function(s){return s.startsWith('rm_tok=');})
+       || cookies.find(function(s){return s.startsWith('rm_api_token=');});
+  if (c) return decodeURIComponent(c.split('=')[1]);
+  try { return localStorage.getItem('rm_tok') || localStorage.getItem('rm_api_token'); } catch(e){ return null; }
 }
-function removeToken() {
-  deleteCookie('rm_api_token');
-  try { localStorage.removeItem('rm_api_token'); } catch(e) {}
+function clearToken() {
+  document.cookie='rm_tok=;expires=Thu,01 Jan 1970 00:00:00 UTC;path=/;';
+  try { localStorage.removeItem('rm_tok'); } catch(e){}
 }
 
-// ── State ───────────────────────────────────────────────────────
-var allProjects = [];
-var currentFilter = 'all';
-var autoRefreshTimer = null;
-
-// ── Token UI ────────────────────────────────────────────────────
-function renderTokenArea() {
-  var token = loadToken();
+// ─────────────────────────────────────────────
+// TOKEN UI
+// ─────────────────────────────────────────────
+function renderTokenUI() {
   var area = document.getElementById('token-area');
-  if (token) {
-    area.innerHTML = '<div class="token-pill"><i class="ti ti-circle-check" style="color:var(--green)"></i><span class="connected">Connected</span><button onclick="disconnectToken()">Change token</button></div>';
+  if (loadToken()) {
+    area.innerHTML = '<div class="token-pill"><i class="ti ti-circle-check" style="color:var(--green)"></i><span class="ok">Connected</span><button onclick="disconnect()">Change</button></div>';
   } else {
-    area.innerHTML = '<div class="token-input-wrap"><input type="password" id="token-field" placeholder="Paste API token\u2026" onkeydown="if(event.key===\'Enter\')connectToken()" /><button class="btn-connect" onclick="connectToken()">Connect</button></div>';
+    area.innerHTML = '<div class="token-input-wrap"><input type="password" id="tok-field" placeholder="Paste API token…" onkeydown="if(event.key===\'Enter\')connect()"/><button class="btn-connect" onclick="connect()">Connect</button></div>';
+  }
+}
+function connect() {
+  var f = document.getElementById('tok-field');
+  var t = f ? f.value.trim() : '';
+  if (!t) return;
+  saveToken(t);
+  renderTokenUI();
+  fetchProjects();
+}
+function disconnect() {
+  clearToken();
+  projects=[]; shortages=[]; shortagesLoaded=false;
+  renderTokenUI();
+  setContent('<div class="empty-state"><i class="ti ti-plug-connected"></i><p>Enter your API token to get started.</p></div>');
+  updateStats();
+  clearStatusBar();
+}
+
+// ─────────────────────────────────────────────
+// ERROR
+// ─────────────────────────────────────────────
+function showError(msg) {
+  document.getElementById('error-area').innerHTML =
+    '<div class="error-box"><i class="ti ti-alert-circle"></i><span>'+msg+'</span></div>';
+}
+function clearError() { document.getElementById('error-area').innerHTML=''; }
+
+// ─────────────────────────────────────────────
+// CONTENT HELPER
+// ─────────────────────────────────────────────
+function setContent(html) {
+  document.getElementById('content-area').innerHTML = html;
+}
+
+// ─────────────────────────────────────────────
+// STATUS BAR
+// ─────────────────────────────────────────────
+function startStatusBar(count) {
+  if (statusTimer) clearInterval(statusTimer);
+  loadTime = new Date();
+  function tick() {
+    var sec = Math.floor((new Date() - loadTime) / 1000);
+    var ago = sec < 60 ? 'just now' : sec < 3600 ? Math.floor(sec/60)+'m ago' : Math.floor(sec/3600)+'h ago';
+    var el = document.getElementById('status-bar');
+    if (el) el.innerHTML = '<div class="sb-count">'+count+' projects</div><div class="sb-time">updated '+ago+'</div>';
+  }
+  tick();
+  statusTimer = setInterval(tick, 30000);
+}
+function clearStatusBar() {
+  if (statusTimer) clearInterval(statusTimer);
+  document.getElementById('status-bar').innerHTML = '';
+}
+
+// ─────────────────────────────────────────────
+// DATE HELPERS
+// ─────────────────────────────────────────────
+function todayStr() {
+  var d=new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+function offsetStr(days) {
+  var d=new Date(); d.setDate(d.getDate()+days);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function dateOnly(s) { return s ? s.substring(0,10) : null; }
+function daysFromNow(s) {
+  if (!s) return null;
+  var p=s.substring(0,10).split('-');
+  var d=new Date(+p[0],+p[1]-1,+p[2]);
+  var now=new Date(); now.setHours(0,0,0,0);
+  return Math.round((d-now)/86400000);
+}
+function fmtDate(s) {
+  if (!s) return '–';
+  return new Date(s.substring(0,10)+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─────────────────────────────────────────────
+// STATUS HELPERS
+// ─────────────────────────────────────────────
+// Rentman project statuses (lowercase):
+// draft, option, pending, confirmed, prepped, onlocation, returned, cancelled
+// "prepped" = packed and ready to go
+// Rentman may return status as string or numeric code
+// Known values: 1=option, 2=confirmed, 3=prepped, 4=onlocation, 5=returned, 9=cancelled
+// Or as strings: "option","confirmed","prepped","on location","returned","cancelled"
+function normaliseStatus(raw) {
+  if (!raw && raw !== 0) return '';
+  // Rentman returns status as URL: "/statuses/4"
+  var urlMatch = String(raw).match(/\/statuses\/(\d+)/);
+  if (urlMatch) raw = parseInt(urlMatch[1]);
+  // Numeric codes (confirmed from Rentman docs + subproject data)
+  var codes = { 1:'concept', 2:'option', 3:'confirmed', 4:'prepped', 5:'onlocation', 6:'returned', 9:'cancelled' };
+  var n = parseInt(raw);
+  if (!isNaN(n) && codes[n]) return codes[n];
+  // Plain string fallback
+  return String(raw).toLowerCase().replace(/[^a-z]/g,'');
+}
+
+function statusInfo(s) {
+  s = (s||'').toLowerCase().replace(/[^a-z]/g,'');
+  if (s==='concept')     return { label:'Concept',         color:'var(--faint)',  icon:'ti-pencil',          pct:null };
+  if (s==='prepped')     return { label:'Packed & Ready',  color:'var(--green)',  icon:'ti-circle-check',    pct:100 };
+  if (s==='onlocation')  return { label:'On Location',     color:'var(--blue)',   icon:'ti-map-pin',         pct:100 };
+  if (s==='returned')    return { label:'Returned',        color:'var(--muted)',  icon:'ti-package-import',  pct:100 };
+  if (s==='confirmed')   return { label:'Confirmed',       color:'var(--orange)', icon:'ti-clock',           pct:null };
+  if (s==='pending')     return { label:'Pending',         color:'var(--faint)',  icon:'ti-hourglass',       pct:null };
+  if (s==='option')      return { label:'Option',          color:'var(--faint)',  icon:'ti-question-mark',   pct:null };
+  if (s==='cancelled')   return { label:'Cancelled',       color:'var(--red)',    icon:'ti-x',               pct:null };
+  return                          { label: s||'Unknown',   color:'var(--faint)',  icon:'ti-circle',          pct:null };
+}
+
+function packingUrgency(p) {
+  // Returns css color class based on how soon it departs and whether it's packed
+  var s = (p.status||'').toLowerCase().replace(/[^a-z]/g,'');
+  var dSt = daysFromNow(p.start);
+  if (s==='prepped' || s==='onlocation') return 'var(--green)';
+  if (s==='cancelled') return 'var(--faint)';
+  if (dSt === null) return 'var(--faint)';
+  if (dSt <= 0) return 'var(--red)';    // leaving today or overdue — not packed!
+  if (dSt <= 1) return 'var(--red)';    // tomorrow — urgent
+  if (dSt <= 3) return 'var(--orange)'; // within 3 days
+  return 'var(--yellow)';               // more than 3 days
+}
+
+// ─────────────────────────────────────────────
+// DISPATCH WARNING
+// Returns HTML warning badge if project should have been dispatched but hasn't
+// Called both at render time (date-based) and updated by loadPackingForVisible (pct-based)
+function dispatchWarningHtml(p, pct) {
+  var s     = (p.status||'').toLowerCase().replace(/[^a-z]/g,'');
+  var dSt   = daysFromNow(p.start);
+  var today = todayStr();
+  var start = dateOnly(p.start);
+
+  // Already dispatched — no warning needed
+  if (s === 'onlocation') return '';
+
+  // Start date has passed — should be on location already
+  if (start && start <= today) {
+    return '<span class="dispatch-warning critical"><i class="ti ti-truck-off"></i>NOT DISPATCHED!</span>';
+  }
+
+  // Leaving today or tomorrow — check packing %
+  if (dSt !== null && dSt <= 1) {
+    if (pct !== null && pct >= 80) {
+      return '<span class="dispatch-warning critical"><i class="ti ti-send"></i>READY — MARK AS ON LOCATION!</span>';
+    }
+    if (dSt === 0) {
+      return '<span class="dispatch-warning critical"><i class="ti ti-truck-off"></i>LEAVING TODAY — NOT DISPATCHED!</span>';
+    }
+    return '<span class="dispatch-warning warn"><i class="ti ti-alert-triangle"></i>Leaving tomorrow — dispatch soon</span>';
+  }
+
+  // Leaving in 2–3 days and nearly packed
+  if (dSt !== null && dSt <= 3 && pct !== null && pct >= 90) {
+    return '<span class="dispatch-warning warn"><i class="ti ti-send"></i>Nearly packed — remember to dispatch</span>';
+  }
+
+  return '';
+}
+
+// ─────────────────────────────────────────────
+// CLASSIFY
+// ─────────────────────────────────────────────
+function classify(p) {
+  var today = todayStr();
+  var s     = (p.status||'').toLowerCase().replace(/[^a-z]/g,'');
+  var start = dateOnly(p.start);
+  var end   = dateOnly(p.end);
+  if (!start && !end) return 'unknown';
+  if (s === 'cancelled' || s === 'returned') return 'unknown';
+
+  // ON LOCATION → always IN (it's out there, on its way back)
+  if (s === 'onlocation') {
+    if (end && end < today) return 'overdue';
+    return 'in';
+  }
+
+  // OVERDUE by date (and not on location)
+  if (end && end < today) return 'overdue';
+
+  // PREPPED (packed but not yet dispatched) → always OUT
+  if (s === 'prepped') return 'out';
+
+  // Start date in future → OUT (upcoming departure)
+  if (start && start > today) return 'out';
+
+  // Start date has passed but not dispatched → still OUT (needs to leave!)
+  if (start && start <= today && end && end >= today) return 'out';
+
+  return 'unknown';
+}
+
+// Window checks — use plain variables, never read DOM selects
+function inWindow(p) {
+  if (classify(p) !== 'in') return false;
+  var end = dateOnly(p.end);
+  if (!end) return false;
+  if (inWin === 'all') return true;
+  return end < offsetStr(parseInt(inWin));
+}
+function outWindow(p) {
+  if (classify(p) !== 'out') return false;
+  var s     = (p.status||'').toLowerCase().replace(/[^a-z]/g,'');
+  var start = dateOnly(p.start);
+  var today = todayStr();
+  // Prepped or start already passed → always show, regardless of window
+  if (s === 'prepped') return true;
+  if (start && start <= today) return true;
+  // Future departures — apply window filter
+  if (!start) return false;
+  if (outWin === 'all') return true;
+  return start < offsetStr(parseInt(outWin));
+}
+function overdueWindow(p) {
+  if (classify(p) !== 'overdue') return false;
+  var end = dateOnly(p.end);
+  if (!end) return false;
+  if (overdueWin === 'all') return true;
+  return end >= offsetStr(-parseInt(overdueWin));
+}
+
+// ─────────────────────────────────────────────
+// STATS
+// ─────────────────────────────────────────────
+function updateStats() {
+  var ov=0, inn=0, out=0;
+  projects.forEach(function(p) {
+    var c = classify(p);
+    if (c==='overdue' && overdueWindow(p)) ov++;
+    if (c==='in'      && inWindow(p))      inn++;
+    if (c==='out'     && outWindow(p))     out++;
+  });
+  document.getElementById('s-overdue').textContent  = ov;
+  document.getElementById('s-in').textContent       = inn;
+  document.getElementById('s-out').textContent      = out;
+  // shortages count is updated by loadShortages
+}
+
+// ─────────────────────────────────────────────
+// VIEW SWITCHING — robust, stores state in var
+// ─────────────────────────────────────────────
+function setView(v) {
+  currentView = v;
+  // Highlight active stat card
+  ['overdue','in','out','shortages'].forEach(function(k) {
+    var el = document.getElementById('stat-'+k);
+    if (el) el.classList.toggle('active', k===v);
+  });
+  // Show correct window dropdown
+  ['overdue','in','out'].forEach(function(k) {
+    var el = document.getElementById('win-'+k);
+    if (el) el.classList.toggle('visible', k===v);
+  });
+  // Load or render
+  if (v==='shortages') {
+    if (!shortagesLoaded) { loadShortages(7); } else { renderShortages(); }
+  } else {
+    render();
   }
 }
 
-function connectToken() {
-  var field = document.getElementById('token-field');
-  var t = field ? field.value.trim() : '';
-  if (!t) { showError('Please paste your Rentman API token first.'); return; }
-  saveToken(t);
-  clearError();
-  renderTokenArea();
-  fetchData();
-}
-
-function disconnectToken() {
-  removeToken();
-  allProjects = [];
-  renderTokenArea();
-  updateStats([]);
-  document.getElementById('last-updated').textContent = '';
-  document.getElementById('projects-area').innerHTML = '<div class="empty-state"><i class="ti ti-plug-connected"></i><p>Enter your Rentman API token in the top-right corner to get started.</p></div>';
-}
-
-// ── Error ────────────────────────────────────────────────────────
-function showError(msg) {
-  document.getElementById('error-area').innerHTML = '<div class="error-box"><i class="ti ti-alert-circle"></i><span>' + msg + '</span></div>';
-}
-function clearError() { document.getElementById('error-area').innerHTML = ''; }
-
-// ── Fetch ────────────────────────────────────────────────────────
-function fetchData() {
+// ─────────────────────────────────────────────
+// FETCH PROJECTS
+// ─────────────────────────────────────────────
+function fetchProjects() {
   var token = loadToken();
   if (!token) return;
   clearError();
+  shortagesLoaded = false;
+  shortages = [];
+  packingCache = {};
+  document.getElementById('s-shortages').textContent = '–';
+
   var btn = document.getElementById('refresh-btn');
   btn.classList.add('spinning');
-  document.getElementById('projects-area').innerHTML = '<div class="loading-state"><div class="spinner"></div> Loading projects from Rentman…</div>';
+  setContent('<div class="loading-state"><div class="spinner"></div> Loading projects from Rentman…</div>');
 
-  function normalise(p) {
-    return {
-      id: p.id,
-      name: p.name || p.displayname || '(unnamed)',
-      number: p.number || p.project_number || p.id,
-      planperiod_start: p.planperiod_start || p.period_from || p.date_period_start || p.start || null,
-      planperiod_end:   p.planperiod_end   || p.period_to   || p.date_period_end   || p.end   || null,
-      status: p.status,
-      location_name: p.location_name || p.location || p.venue || ''
-    };
+  function doFetch(url) {
+    return fetch(url, {
+      headers: { 'Authorization': 'Bearer '+token, 'Accept': 'application/json' }
+    }).then(function(res) {
+      if (res.status === 401) { showError('Invalid API token — please disconnect and re-enter.'); return null; }
+      if (!res.ok) {
+        if (res.status === 400 && url.indexOf('sort=') !== -1) {
+          return doFetch('/api/projects?limit=300');
+        }
+        return res.text().then(function(t){ showError('API error '+res.status+': '+t.slice(0,200)); return null; });
+      }
+      return res.json();
+    });
   }
 
-  fetch('/api/projects?limit=300&sort=-number', {
-    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
-  }).then(function(res) {
-    if (res.status === 401) {
-      showError('Invalid API token — please disconnect and enter a valid token.');
-      btn.classList.remove('spinning');
-      return null;
-    }
-    if (!res.ok) {
-      return res.text().then(function(txt) {
-        showError('Rentman API returned ' + res.status + ': ' + txt.slice(0,200));
-        btn.classList.remove('spinning');
-        return null;
+  // Fetch projects and subprojects in parallel, merge status from subprojects
+  Promise.all([
+    doFetch('/api/projects?limit=300&sort=-number'),
+    doFetch('/api/subprojects?limit=300&sort=-id')  // matches projects limit - newest first
+  ]).then(function(results) {
+    var projData = results[0];
+    var subData  = results[1];
+    if (!projData) return;
+
+    var rawProj = projData.data || projData || [];
+    var rawSub  = subData ? (subData.data || subData || []) : [];
+
+    // Build a map: project path -> status from subprojects
+    // subproject.project = "/projects/194", subproject.status = "/statuses/5"
+    var statusMap = {};
+    rawSub.forEach(function(sp) {
+      if (!sp.project || !sp.status) return;
+      var projPath = sp.project; // "/projects/194"
+      // Only keep the most "advanced" status per project
+      var existing = statusMap[projPath];
+      var newCode = parseInt((sp.status.match(/\/statuses\/(\d+)/)||[])[1]||0);
+      var oldCode = existing ? parseInt((existing.match(/\/statuses\/(\d+)/)||[])[1]||0) : 0;
+      // Higher code = more advanced status (prepped=4, onlocation=5 take priority)
+      if (newCode > oldCode) statusMap[projPath] = sp.status;
+    });
+
+    projects = rawProj
+      .filter(function(p){ return p.planperiod_start || p.planperiod_end; })
+      .map(function(p) {
+        var projPath = '/projects/'+p.id;
+        var rawStatus = statusMap[projPath] || p.status || '';
+        return {
+          id:       p.id,
+          name:     p.name || p.displayname || '(unnamed)',
+          number:   p.number || p.id,
+          start:    p.planperiod_start || p.period_from || null,
+          end:      p.planperiod_end   || p.period_to   || null,
+          location: p.location_name || p.location || '',
+          status:   normaliseStatus(rawStatus)
+        };
       });
-    }
-    return res.json();
-  }).then(function(data) {
-    if (!data) return;
-    var raw = data.data || data || [];
-    if (raw.length > 0) {
-      console.log('Rentman fields:', Object.keys(raw[0]));
-      raw.slice(0,5).forEach(function(p) {
-        var n = normalise(p);
-        console.log(n.name, '| start:', dateOnly(n.planperiod_start), '| end:', dateOnly(n.planperiod_end), '| class:', classify(n));
-      });
-    }
-    allProjects = raw.filter(function(p){
-      return p.planperiod_end || p.planperiod_start || p.period_from || p.period_to;
-    }).map(normalise);
-    updateStats(allProjects);
-    renderProjects();
-    document.getElementById('last-updated').textContent =
-      'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) +
-      ' — ' + allProjects.length + ' projects';
-    btn.classList.remove('spinning');
+
+    updateStats();
+    render();
+    startStatusBar(projects.length);
   }).catch(function(e) {
-    showError('Could not reach the proxy. Make sure rentman-proxy.py is running. Error: ' + e.message);
-    document.getElementById('projects-area').innerHTML = '';
+    showError('Cannot reach proxy. Is rentman-proxy.py running? ('+e.message+')');
+    setContent('');
+  }).finally(function() {
     btn.classList.remove('spinning');
   });
 }
 
-// ── Auto-refresh ──────────────────────────────────────────────────
-function toggleAutoRefresh() {
-  if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
-  if (document.getElementById('auto-refresh-toggle').checked) {
-    autoRefreshTimer = setInterval(fetchData, 5 * 60 * 1000);
+// ─────────────────────────────────────────────
+// DISPATCH BUTTON
+// ─────────────────────────────────────────────
+function dispatchBtnHtml(p) {
+  var s = p.status || '';
+  // Already dispatched
+  if (s === 'onlocation') return '';
+  // Check cache for packing %
+  var cached = packingCache[p.id];
+  var pct = cached ? cached.pct : (s === 'prepped' ? 100 : 0);
+  var dSt = daysFromNow(p.start);
+  // Show dispatch button if: >=90% packed AND departing within 3 days (or already started)
+  var readyToDispatch = pct >= 90 && (dSt !== null && dSt <= 3);
+  if (readyToDispatch) {
+    return '<button class="btn-dispatch" id="dispatch-'+p.id+'" onclick="dispatchProject('+p.id+',\''+escHtml(p.name)+'\')">'
+      +'<i class="ti ti-send"></i> Dispatch</button>';
   }
+  return '';
 }
 
-// ── Classify ──────────────────────────────────────────────────────
-function todayMidnight() { var d = new Date(); d.setHours(0,0,0,0); return d; }
+function dispatchProject(projId, projName) {
+  var token = loadToken();
+  if (!token) return;
+  if (!confirm('Mark "'+projName+'" as ON LOCATION in Rentman?')) return;
 
-function todayStr() {
-  var d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-function offsetDateStr(days) {
-  var d = new Date(); d.setDate(d.getDate() + days);
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-function dateOnly(str) {
-  if (!str) return null;
-  // Handle both "2026-06-10" and "2026-06-10T00:00:00" formats
-  return str.substring(0, 10);
-}
-function classify(p) {
-  var today  = todayStr();
-  var start  = dateOnly(p.planperiod_start);
-  var end    = dateOnly(p.planperiod_end);
-  if (!end && !start) return 'upcoming';
-  // Overdue: end date is in the past
-  if (end && end < today) return 'overdue';
-  // Departing: starts in the future
-  if (start && start > today) return 'departing';
-  // Active: started (or no start date) and end date is in the future
-  if (end && end >= today) return 'active';
-  // Active: started but no end date
-  if (start && start <= today) return 'active';
-  return 'upcoming';
-}
+  var btn = document.getElementById('dispatch-'+projId);
+  if (btn) { btn.classList.add('dispatching'); btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Dispatching…'; }
 
-// Returning = active projects whose end date falls within the selected window
-function isReturningProject(p) {
-  return classify(p) === 'active';
-}
-
-function isOverdueInWindow(p) {
-  var end = dateOnly(p.planperiod_end);
-  if (!end) return false;
-  var today = todayStr();
-  if (end >= today) return false; // not overdue
-  var sel = document.getElementById('overdue-window');
-  var win = sel ? sel.value : '7';
-  if (win === 'all') return true;
-  var days = parseInt(win);
-  var cutoff = offsetDateStr(-days);
-  return end >= cutoff;
-}
-
-function isReturningInWindow(p) {
-  if (classify(p) !== 'active') return false;
-  var end = dateOnly(p.planperiod_end);
-  if (!end) return false;
-  var sel = document.getElementById('returning-window');
-  var win = sel ? sel.value : '7';
-  if (win === 'all') return true;
-  var days = parseInt(win);
-  var cutoff = offsetDateStr(days);
-  return end < cutoff;
-}
-
-function returningDayLabel(p) {
-  var d = daysFromNow(p.planperiod_end);
-  if (d === null) return '';
-  if (d === 0) return 'today';
-  if (d === 1) return 'tomorrow';
-  if (d <= 6) return 'in ' + d + ' days';
-  return 'in ' + d + 'd';
-}
-
-function isDepartingInWindow(p) {
-  var start = dateOnly(p.planperiod_start);
-  if (!start) return false;
-  var today = todayStr();
-  if (start < today) return false; // already started
-  var sel = document.getElementById('departing-window');
-  var win = sel ? sel.value : '7';
-  if (win === 'all') return true;
-  var days = parseInt(win);
-  var cutoff = offsetDateStr(days);
-  return start < cutoff;
-}
-
-function departingDayLabel(p) {
-  var d = daysFromNow(p.planperiod_start);
-  if (d === null) return '';
-  if (d === 0) return 'today';
-  if (d === 1) return 'tomorrow';
-  if (d <= 6) return 'in ' + d + ' days';
-  return 'in ' + d + 'd';
-}
-
-function daysFromNow(str) {
-  if (!str) return null;
-  var s = str.substring(0, 10); // "2026-06-10"
-  var parts = s.split('-');
-  var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-  var now = new Date(); now.setHours(0,0,0,0);
-  return Math.round((d - now) / 86400000);
-}
-
-function fmtDate(str) {
-  if (!str) return '\u2013';
-  return new Date(str).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
-}
-
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ── Stats ─────────────────────────────────────────────────────────
-function updateStats(projects) {
-  var overdue=0, returning=0, active=0, departing=0;
-  projects.forEach(function(p) {
-    var c = classify(p);
-    if (c==='overdue') overdue++;
-    else if (c==='active') {
-      active++;
-      if (isReturningInWindow(p)) returning++;
+  // Update the subproject status to "on location" (/statuses/5)
+  // We need to find the subproject ID for this project first
+  fetch('/api/subprojects?limit=10', {
+    headers: { 'Authorization': 'Bearer '+token, 'Accept': 'application/json' }
+  }).then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(data) {
+    // Find subproject belonging to this project
+    var all = data ? (data.data || data || []) : [];
+    var sub = all.find(function(sp){ return sp.project === '/projects/'+projId; });
+    if (!sub) {
+      // Try fetching specifically for this project
+      return fetch('/api/projects/'+projId+'/subprojects?limit=5', {
+        headers: { 'Authorization': 'Bearer '+token, 'Accept': 'application/json' }
+      }).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        var subs = d ? (d.data || d || []) : [];
+        return subs[0] || null;
+      });
     }
-    else if (c==='departing') departing++;
+    return sub;
+  })
+  .then(function(sub) {
+    if (!sub) throw new Error('Could not find subproject for project '+projId);
+    var subId = sub.id;
+    // PATCH the subproject status to onlocation (/statuses/5)
+    return fetch('/api/subprojects/'+subId, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': 'Bearer '+token,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: '/statuses/5' })
+    });
+  })
+  .then(function(res) {
+    if (!res || !res.ok) {
+      return (res ? res.text() : Promise.resolve('No response')).then(function(t){
+        throw new Error('API returned '+( res ? res.status : '?')+': '+t.slice(0,200));
+      });
+    }
+    // Success — update local project status and re-render
+    var proj = projects.find(function(p){ return p.id === projId; });
+    if (proj) proj.status = 'onlocation';
+    // Remove from cache so it re-classifies
+    delete packingCache[projId];
+    updateStats();
+    render();
+    showSuccess('"'+projName+'" marked as On Location!');
+  })
+  .catch(function(e) {
+    showError('Dispatch failed: '+e.message);
+    var btn2 = document.getElementById('dispatch-'+projId);
+    if (btn2) { btn2.classList.remove('dispatching'); btn2.disabled = false; btn2.innerHTML = '<i class="ti ti-send"></i> Dispatch'; }
   });
-  document.getElementById('s-overdue').textContent   = overdue;
-  document.getElementById('s-returning').textContent = returning;
-  document.getElementById('s-active').textContent    = active;
-  document.getElementById('s-departing').textContent = departing;
-  document.getElementById('s-all').textContent       = projects.length;
 }
 
-// ── Filter ────────────────────────────────────────────────────────
-function setFilter(f) {
-  currentFilter = f;
-  ['all','overdue','returning','active','departing'].forEach(function(k) {
-    var el = document.getElementById('stat-' + k);
-    if (el) el.classList.toggle('active', k === f);
-  });
-  var ow = document.getElementById('overdue-window');
-  if (ow) ow.style.display = (f === 'overdue') ? '' : 'none';
-  var rw = document.getElementById('returning-window');
-  if (rw) rw.style.display = (f === 'returning') ? '' : 'none';
-  var dw = document.getElementById('departing-window');
-  if (dw) dw.style.display = (f === 'departing') ? '' : 'none';
-  renderProjects();
+function showSuccess(msg) {
+  var area = document.getElementById('error-area');
+  area.innerHTML = '<div style="background:var(--green-bg);border:1px solid var(--green);border-radius:8px;padding:.75rem 1rem;font-size:13px;color:var(--green);margin-bottom:1rem;display:flex;gap:8px"><i class="ti ti-circle-check"></i><span>'+msg+'</span></div>';
+  setTimeout(function(){ area.innerHTML = ''; }, 4000);
 }
 
-// ── Render ────────────────────────────────────────────────────────
-function renderProjects() {
+// ─────────────────────────────────────────────
+// RENDER PROJECT LIST
+// ─────────────────────────────────────────────
+function render() {
+  if (currentView === 'shortages') { renderShortages(); return; }
+
   var search = (document.getElementById('search-input').value || '').toLowerCase().trim();
-  var sort   = document.getElementById('sort-select').value;
 
-  var list = allProjects.filter(function(p) {
-    var c = classify(p);
-    var mf;
-    if (currentFilter === 'overdue') {
-      mf = (c === 'overdue') && isOverdueInWindow(p);
-    } else if (currentFilter === 'returning') {
-      mf = isReturningInWindow(p);
-    } else if (currentFilter === 'departing') {
-      mf = (c === 'departing') && isDepartingInWindow(p);
-    } else {
-      mf = currentFilter === 'all' || c === currentFilter;
-    }
-    var ms = !search
-      || (p.name||'').toLowerCase().indexOf(search) !== -1
-      || String(p.number||'').indexOf(search) !== -1
-      || (p.location_name||'').toLowerCase().indexOf(search) !== -1;
-    return mf && ms;
+  var list = projects.filter(function(p) {
+    var matchView;
+    if      (currentView==='overdue') matchView = overdueWindow(p);
+    else if (currentView==='in')      matchView = inWindow(p);
+    else if (currentView==='out')     matchView = outWindow(p);
+    else matchView = false;
+
+    if (!matchView) return false;
+    if (!search) return true;
+    return (p.name||'').toLowerCase().indexOf(search)!==-1
+        || String(p.number||'').indexOf(search)!==-1
+        || (p.location||'').toLowerCase().indexOf(search)!==-1;
   });
 
-  list.sort(function(a, b) {
-    // Departing filter: always sort by start date ascending (soonest first)
-    if (currentFilter === 'departing') {
-      return (a.planperiod_start||'9999').localeCompare(b.planperiod_start||'9999');
-    }
-    if (sort === 'end-asc')    return (a.planperiod_end||'9999').localeCompare(b.planperiod_end||'9999');
-    if (sort === 'end-desc')   return (b.planperiod_end||'9999').localeCompare(a.planperiod_end||'9999');
-    if (sort === 'start-asc')  return (a.planperiod_start||'9999').localeCompare(b.planperiod_start||'9999');
-    if (sort === 'number-asc') return (a.number||0) - (b.number||0);
-    return 0;
-  });
+  // Sort
+  if (currentView==='overdue') {
+    // Most recently overdue first
+    list.sort(function(a,b){ return (dateOnly(b.end)||'').localeCompare(dateOnly(a.end)||''); });
+  } else if (currentView==='in') {
+    // Due back soonest first
+    list.sort(function(a,b){ return (dateOnly(a.end)||'9999').localeCompare(dateOnly(b.end)||'9999'); });
+  } else if (currentView==='out') {
+    // Sort: unpacked & urgent first, then by start date
+    list.sort(function(a,b) {
+      var sa = (a.status||'').toLowerCase().replace(/[^a-z]/g,'');
+      var sb = (b.status||'').toLowerCase().replace(/[^a-z]/g,'');
+      var aPacked = (sa==='prepped'||sa==='onlocation') ? 1 : 0;
+      var bPacked = (sb==='prepped'||sb==='onlocation') ? 1 : 0;
+      if (aPacked !== bPacked) return aPacked - bPacked; // unpacked first
+      return (dateOnly(a.start)||'9999').localeCompare(dateOnly(b.start)||'9999');
+    });
+  }
 
   if (!list.length) {
-    var msg = allProjects.length === 0
-      ? '<p>No projects loaded yet. Check your API token and click Refresh.</p>'
-      : '<p>No projects match the current filter or search.</p>';
-    document.getElementById('projects-area').innerHTML = '<div class="empty-state"><i class="ti ti-mood-empty"></i>' + msg + '</div>';
+    var msgs = {
+      overdue: 'No overdue projects in this period.',
+      in:      'Nothing coming back in this window.',
+      out:     'Nothing going out in this window.'
+    };
+    setContent('<div class="empty-state"><i class="ti ti-circle-check"></i><p>'+(msgs[currentView]||'No projects found.')+'</p></div>');
     return;
   }
 
-  var dotColor  = { returning:'var(--orange)', departing:'var(--blue)', active:'var(--green)', overdue:'var(--red)', upcoming:'var(--text-faint)' };
-  var badgeCls  = { returning:'badge-returning', departing:'badge-departing', active:'badge-active', overdue:'badge-overdue', upcoming:'badge-upcoming' };
-  var badgeLbl  = { returning:'Returning', departing:'Departing', active:'Active', overdue:'Overdue', upcoming:'Upcoming' };
-  var badgeIcon = { returning:'ti-package-import', departing:'ti-truck', active:'ti-clock-play', overdue:'ti-alert-triangle', upcoming:'ti-calendar' };
-  var noteColor = { overdue:'var(--red)', returning:'var(--orange)', departing:'var(--blue)', active:'var(--green)', upcoming:'var(--text-faint)' };
-
-  var groups = [
-    { key:'overdue',   label:'Overdue returns' },
-    { key:'returning', label:'Returning' },
-    { key:'active',    label:'Currently active' },
-    { key:'departing', label:'Departing soon' },
-    { key:'upcoming',  label:'Upcoming' }
-  ];
-
-  var html = '';
-  if (currentFilter === 'all') {
-    groups.forEach(function(g) {
-      var items = list.filter(function(p){ return classify(p) === g.key; });
-      if (!items.length) return;
-      html += '<div class="section-head">' + g.label + ' <span style="color:var(--text-faint);font-weight:400">' + items.length + '</span></div>';
-      html += '<div class="proj-list">' + items.map(function(p){ return projCard(p, badgeCls, badgeLbl, badgeIcon, dotColor, noteColor); }).join('') + '</div>';
-    });
-  } else {
-    html = '<div class="proj-list">' + list.map(function(p){ return projCard(p, badgeCls, badgeLbl, badgeIcon, dotColor, noteColor); }).join('') + '</div>';
+  // Legend for OUT view
+  var legend = '';
+  if (currentView === 'out') {
+    legend = '<div class="pack-legend">'
+      +'<span class="legend-title">Packing status:</span>'
+      +'<span class="legend-dot" style="background:var(--red)"></span><span>Leaving today/tomorrow — not packed!</span>'
+      +'<span class="legend-dot" style="background:var(--orange)"></span><span>Leaving soon — not packed</span>'
+      +'<span class="legend-dot" style="background:var(--yellow)"></span><span>Upcoming — not packed</span>'
+      +'<span class="legend-dot" style="background:var(--green)"></span><span>Packed &amp; ready</span>'
+      +'</div>';
   }
 
-  document.getElementById('projects-area').innerHTML = html;
+  var dotCol  = { overdue:'var(--red)', in:'var(--orange)', out:'var(--blue)' };
+  var badgeCls= { overdue:'badge-overdue', in:'badge-in', out:'badge-out' };
+  var badgeIcon={ overdue:'ti-alarm', in:'ti-package-import', out:'ti-package-export' };
+  var badgeLbl= { overdue:'Overdue', in:'On its way IN', out:'On its way OUT' };
+
+  var cards = list.map(function(p) {
+    var c    = currentView;
+    var dEnd = daysFromNow(p.end);
+    var dSt  = daysFromNow(p.start);
+
+    var note = '';
+    if (c==='overdue') {
+      note = '<span class="proj-note c-red">'+Math.abs(dEnd)+(Math.abs(dEnd)===1?' day':' days')+' overdue</span>';
+    } else if (c==='in') {
+      var dl = dEnd===0 ? 'Due back TODAY' : dEnd===1 ? 'Due back TOMORROW' : 'Due back in '+dEnd+' days';
+      note = '<span class="proj-note c-orange">'+dl+'</span>';
+    } else if (c==='out') {
+      var dl = dSt===0 ? 'Leaving TODAY' : dSt===1 ? 'Leaving TOMORROW' : 'Leaving in '+dSt+' days';
+      note = '<span class="proj-note c-blue">'+dl+'</span>';
+    }
+
+    var loc = p.location ? '<span class="proj-loc"><i class="ti ti-map-pin"></i>'+escHtml(p.location)+'</span>' : '';
+
+    // Status badge for OUT view
+    var statusHtml = '';
+    var urgencyBorder = '';
+    if (c==='out') {
+      var si = statusInfo(p.status);
+      var urg = packingUrgency(p);
+      urgencyBorder = 'border-left: 4px solid '+urg+';';
+      statusHtml = '<span class="packing-badge" style="background:'+si.color+'22;color:'+si.color+';border:1px solid '+si.color+'44">'
+        +'<i class="ti '+si.icon+'"></i>'+si.label+'</span>'
+        +'<span class="dispatch-warn-slot">'+dispatchWarningHtml(p, null)+'</span>';
+    }
+
+    // Progress bar elements for OUT cards
+    var progressHtml = '';
+    var progressLbl  = '';
+    var dataAttrs    = '';
+    if (c === 'out') {
+      var si = statusInfo(p.status);
+      var initPct = (si.pct !== null) ? si.pct : 0;
+      // Check cache immediately
+      var cached = packingCache[p.id];
+      var initLblText = cached ? (cached.pct >= 100 ? '✓ 100% packed' : cached.pct + '% packed') : 'Loading…';
+      var initLblCls  = cached && cached.pct >= 100 ? 'done' : (si.pct===100 ? 'done' : '');
+      var bgPct = cached ? cached.pct : (si.pct || 0);
+      progressHtml = '<div class="proj-progress-bg" style="width:'+bgPct+'%"></div>';
+      progressLbl  = '<span class="proj-progress-label '+initLblCls+'">'+initLblText+'</span>';
+      dataAttrs    = ' data-projid="'+p.id+'" data-status="'+escHtml(p.status)+'" data-start="'+escHtml(p.start||'')+'"';
+    }
+
+    return '<div class="proj-card" style="'+urgencyBorder+'"'+dataAttrs+'>'
+      +progressHtml
+      +'<div class="proj-dot" style="background:'+(c==='out' ? packingUrgency(p) : dotCol[c])+'"></div>'
+      +'<div class="proj-body">'
+      +'<span class="proj-num">#'+escHtml(p.number)+'</span>'
+      +'<span class="proj-name">'+escHtml(p.name)+'</span>'
+      +loc+note+statusHtml+progressLbl
+      +'</div>'
+      +'<div class="proj-meta">'
+      +'<div class="proj-dates">'
+      +'<div class="proj-date-row"><span class="lbl">Start</span><span class="val">'+fmtDate(p.start)+'</span></div>'
+      +'<div class="proj-date-row"><span class="lbl">Return</span><span class="val">'+fmtDate(p.end)+'</span></div>'
+      +'</div>'
+      +(c==='out' ? dispatchBtnHtml(p) : '<span class="badge '+badgeCls[c]+'"><i class="ti '+badgeIcon[c]+'"></i>'+badgeLbl[c]+'</span>')
+      +'</div>'
+      +'</div>';
+  }).join('');
+
+  setContent(legend+'<div class="proj-list">'+cards+'</div>');
+  if (currentView==='out') setTimeout(loadPackingForVisible, 50);
 }
 
-function projCard(p, badgeCls, badgeLbl, badgeIcon, dotColor, noteColor) {
-  var c = classify(p);
-  var dEnd   = daysFromNow(p.planperiod_end);
-  var dStart = daysFromNow(p.planperiod_start);
-  var note = '';
-  if (c === 'overdue')    note = '<span class="proj-note" style="color:' + noteColor.overdue + '">' + Math.abs(dEnd) + 'd overdue</span>';
-  else if (c === 'returning') note = '<span class="proj-note" style="color:' + noteColor.returning + '">Returns ' + returningDayLabel(p) + '</span>';
-  else if (c === 'departing') note = '<span class="proj-note" style="color:' + noteColor.departing + '">Departs ' + departingDayLabel(p) + '</span>';
-  else if (c === 'active' && dEnd !== null) note = '<span class="proj-note" style="color:' + noteColor.active + '">Due back in ' + dEnd + 'd</span>';
+// ─────────────────────────────────────────────
+// SHORTAGES
+// ─────────────────────────────────────────────
+function loadShortages(days) {
+  days = days || 7;
+  var token = loadToken();
+  if (!token) return;
 
-  var location = p.location_name
-    ? '<span class="proj-location"><i class="ti ti-map-pin"></i>' + escHtml(p.location_name) + '</span>' : '';
+  var cutoff = offsetStr(days);
+  var today  = todayStr();
+  var targets = projects.filter(function(p) {
+    var s = dateOnly(p.start);
+    return s && s >= today && s < cutoff;
+  });
 
-  return '<div class="proj-card">'
-    + '<div class="proj-dot" style="background:' + (dotColor[c]||'var(--text-faint)') + '"></div>'
-    + '<div class="proj-body">'
-    +   '<span class="proj-number">#' + (p.number||'?') + '</span>'
-    +   '<span class="proj-name">' + escHtml(p.name||'Unnamed project') + '</span>'
-    +   location
-    +   note
-    + '</div>'
-    + '<div class="proj-meta">'
-    +   '<div class="proj-dates-block">'
-    +     '<div class="proj-date-row"><span class="lbl">Start</span><span class="val">' + fmtDate(p.planperiod_start) + '</span></div>'
-    +     '<div class="proj-date-row"><span class="lbl">Return</span><span class="val">' + fmtDate(p.planperiod_end) + '</span></div>'
-    +   '</div>'
-    +   '<span class="badge ' + (badgeCls[c]||'badge-upcoming') + '"><i class="ti ' + (badgeIcon[c]||'ti-calendar') + '"></i>' + (badgeLbl[c]||c) + '</span>'
-    + '</div>'
-    + '</div>';
+  if (!targets.length) {
+    shortages = []; shortagesLoaded = true;
+    document.getElementById('s-shortages').textContent = '0';
+    setContent(
+      btn30html(days) +
+      '<div class="empty-state"><i class="ti ti-circle-check"></i><p>No projects departing in the next '+days+' days — nothing to check.</p></div>'
+    );
+    return;
+  }
+
+  setContent('<div class="loading-state"><div class="spinner"></div> Checking shortages for '+targets.length+' departing projects… (0/'+targets.length+')</div>');
+
+  var results = [];
+  var done = 0;
+
+  targets.forEach(function(proj) {
+    fetch('/api/projects/'+proj.id+'/projectequipment?limit=300', {
+      headers: { 'Authorization': 'Bearer '+token, 'Accept': 'application/json' }
+    }).then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data) {
+      if (data) {
+        var raw = data.data || data || [];
+        if (done===0 && raw.length)        raw.forEach(function(item) {
+          var s = typeof item.shortage !== 'undefined' ? item.shortage
+                : typeof item.quantity_shortage !== 'undefined' ? item.quantity_shortage : 0;
+          if (s < 0) results.push({
+            name:     item.name || item.equipment_name || item.displayname || 'Unknown item',
+            shortage: s,
+            proj_name:   proj.name,
+            proj_number: proj.number,
+            start: proj.start,
+            end:   proj.end
+          });
+        });
+      }
+    }).catch(function(){})
+    .finally(function() {
+      done++;
+      setContent('<div class="loading-state"><div class="spinner"></div> Checking shortages… ('+done+'/'+targets.length+' projects)</div>');
+      if (done === targets.length) {
+        results.sort(function(a,b){ return a.shortage - b.shortage; });
+        shortages = results;
+        shortagesLoaded = true;
+        document.getElementById('s-shortages').textContent = shortages.length;
+        renderShortages(days);
+      }
+    });
+  });
 }
 
-// ── Init ──────────────────────────────────────────────────────────
-renderTokenArea();
-// Hide overdue window selector by default (shown only when overdue filter active)
-var owEl = document.getElementById('overdue-window');
-if (owEl) owEl.style.display = 'none';
-var rwEl = document.getElementById('returning-window');
-if (rwEl) rwEl.style.display = 'none';
-var dwEl = document.getElementById('departing-window');
-if (dwEl) dwEl.style.display = 'none';
-if (loadToken()) fetchData();
+function btn30html(currentDays) {
+  if (currentDays >= 30) return '';
+  return '<div style="margin-bottom:10px"><button class="btn-30d" onclick="shortagesLoaded=false;loadShortages(30)">'
+    +'<i class="ti ti-calendar-search"></i> Check next 30 days instead</button></div>';
+}
+
+function renderShortages(days) {
+  days = days || 7;
+  if (!shortages.length) {
+    setContent(btn30html(days)+'<div class="empty-state"><i class="ti ti-circle-check"></i><p>No shortages found — all gear accounted for!</p></div>');
+    return;
+  }
+  var cards = shortages.map(function(item) {
+    var shortage = Math.abs(item.shortage);
+    return '<div class="shortage-card">'
+      +'<div class="proj-dot" style="background:var(--yellow)"></div>'
+      +'<div class="proj-body">'
+      +'<span class="proj-num">#'+escHtml(item.proj_number)+'</span>'
+      +'<span class="proj-name">'+escHtml(item.name)+'</span>'
+      +'<span class="proj-loc"><i class="ti ti-folder"></i>'+escHtml(item.proj_name)+'</span>'
+      +'<span class="proj-note c-yellow">'+shortage+(shortage===1?' unit':' units')+' short</span>'
+      +'</div>'
+      +'<div class="proj-meta">'
+      +'<div class="proj-dates">'
+      +'<div class="proj-date-row"><span class="lbl">Goes out</span><span class="val">'+fmtDate(item.start)+'</span></div>'
+      +'<div class="proj-date-row"><span class="lbl">Returns</span><span class="val">'+fmtDate(item.end)+'</span></div>'
+      +'</div>'
+      +'<span class="badge badge-shortage"><i class="ti ti-alert-triangle"></i>Subhire needed</span>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+  setContent(btn30html(days)+'<div class="proj-list">'+cards+'</div>');
+}
+
+// ─────────────────────────────────────────────
+// AUTO REFRESH
+// ─────────────────────────────────────────────
+function toggleAutoRefresh() {
+  if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer=null; }
+  if (document.getElementById('ar-toggle').checked) {
+    autoRefreshTimer = setInterval(function() {
+      // Preserve view and window selections across refresh
+      fetchProjects();
+    }, 5*60*1000);
+  }
+}
+
+// ─────────────────────────────────────────────
+// PACKING PROGRESS
+// ─────────────────────────────────────────────
+
+function fetchPackingProgress(projId, token, callback) {
+  if (packingCache[projId] !== undefined) { callback(packingCache[projId]); return; }
+  // Mark as loading so we don't double-fetch
+  packingCache[projId] = null;
+  fetch('/api/projects/'+projId+'/projectequipment?limit=300', {
+    headers: { 'Authorization': 'Bearer '+token, 'Accept': 'application/json' }
+  }).then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(data) {
+    if (!data) { packingCache[projId] = null; return; }
+    var raw = data.data || data || [];
+    if (raw.length)    var total = 0, packed = 0;
+    raw.forEach(function(item) {
+      // Skip crew/labour lines (factor=1 and ledger suggests non-equipment)
+      var qty = parseFloat(item.quantity || 0);
+      if (qty <= 0) return;
+      // warehouse_reservations = items confirmed/reserved in warehouse (best proxy for packed)
+      var reserved = parseFloat(item.warehouse_reservations || 0);
+      total  += qty;
+      packed += Math.min(reserved, qty);
+    });
+    var result = total > 0 ? { pct: Math.round(packed/total*100), packed: packed, total: total } : null;
+    packingCache[projId] = result;
+    callback(result);
+  }).catch(function(){ packingCache[projId] = null; });
+}
+
+function loadPackingForVisible() {
+  if (currentView !== 'out') return;
+  var token = loadToken();
+  if (!token) return;
+  // Find all cards currently rendered with a data-projid attribute
+  document.querySelectorAll('.proj-card[data-projid]').forEach(function(card) {
+    var id = card.getAttribute('data-projid');
+    if (!id) return;
+    fetchPackingProgress(id, token, function(result) {
+      if (!result) return;
+      var pct = result.pct;
+      var bg = card.querySelector('.proj-progress-bg');
+      var lbl = card.querySelector('.proj-progress-label');
+      if (bg)  bg.style.width = pct + '%';
+      if (lbl) {
+        if (pct >= 100) {
+          lbl.textContent = '✓ 100% packed';
+          lbl.className = 'proj-progress-label done';
+        } else {
+          var urg = packingUrgency({status: card.getAttribute('data-status'), start: card.getAttribute('data-start')});
+          lbl.textContent = pct + '% packed';
+          lbl.className = 'proj-progress-label' + (urg==='var(--red)' ? ' urgent' : '');
+        }
+      }
+      // Update dispatch warning now we know the pct
+      var warnSlot = card.querySelector('.dispatch-warn-slot');
+      if (warnSlot) {
+        var fp = { status: card.getAttribute('data-status'), start: card.getAttribute('data-start') };
+        warnSlot.innerHTML = dispatchWarningHtml(fp, pct);
+      }
+      // Show/update dispatch button based on real pct
+      var dBtn = card.querySelector('.btn-dispatch');
+      var metaDiv = card.querySelector('.proj-meta');
+      if (metaDiv) {
+        var fp2 = {
+          id: card.getAttribute('data-projid'),
+          name: card.querySelector('.proj-name') ? card.querySelector('.proj-name').textContent : '',
+          status: card.getAttribute('data-status'),
+          start: card.getAttribute('data-start')
+        };
+        // Remove old dispatch btn if present
+        if (dBtn) dBtn.remove();
+        // Re-evaluate with real pct
+        var dSt2 = daysFromNow(fp2.start);
+        if (pct >= 90 && dSt2 !== null && dSt2 <= 3 && fp2.status !== 'onlocation') {
+          var newBtn = document.createElement('button');
+          newBtn.className = 'btn-dispatch';
+          newBtn.id = 'dispatch-'+fp2.id;
+          newBtn.innerHTML = '<i class="ti ti-send"></i> Dispatch';
+          newBtn.onclick = function(){ dispatchProject(parseInt(fp2.id), fp2.name); };
+          metaDiv.appendChild(newBtn);
+        }
+      }
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+// Script is at end of body so DOM is ready — run directly
+renderTokenUI();
+setView('in');
+if (loadToken()) fetchProjects();
+
+// Failsafe: if token-area is still empty after 200ms, re-render it
+setTimeout(function() {
+  var area = document.getElementById('token-area');
+  if (area && area.innerHTML.trim() === '') renderTokenUI();
+}, 200);
 </script>
 </body>
 </html>

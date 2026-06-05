@@ -39,8 +39,19 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
+    def do_PATCH(self):
+        if self.path.startswith("/api/"):
+            self.proxy_to_rentman()
+        else:
+            self.send_error(404)
+
+    def do_PUT(self):
+        if self.path.startswith("/api/"):
+            self.proxy_to_rentman()
+        else:
+            self.send_error(404)
+
     def proxy_to_rentman(self):
-        # /api/projects?limit=300  →  strip "/api" (4 chars), keep /projects?limit=300
         rentman_path = self.path[4:]
         url = RENTMAN_API + rentman_path
 
@@ -49,12 +60,20 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             self._json_response(401, {"error": "No Authorization header"})
             return
 
-        print(f"  → {url}")
+        print(f"  → {self.command} {url}")
+
+        # Read request body for PATCH/PUT
+        body = None
+        content_length = int(self.headers.get("Content-Length", 0))
+        if content_length > 0:
+            body = self.rfile.read(content_length)
+        content_type = self.headers.get("Content-Type", "application/json")
 
         try:
-            req = urllib.request.Request(url, headers={
+            req = urllib.request.Request(url, data=body, method=self.command, headers={
                 "Authorization": auth,
                 "Accept": "application/json",
+                "Content-Type": content_type,
                 "User-Agent": "RentmanDashboardProxy/1.0",
             })
             with urllib.request.urlopen(req, timeout=20) as resp:
@@ -86,6 +105,14 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(body)
+
+    def end_headers(self):
+        # Prevent browser caching of HTML and JS files
+        if hasattr(self, 'path') and self.path.split('?')[0].endswith(('.html', '.js')):
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
+        super().end_headers()
 
     def log_message(self, fmt, *args):
         # Only print file-serving lines, not the api proxy lines
